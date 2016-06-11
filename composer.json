@@ -8,7 +8,8 @@
     ],
     "require": {
         "php": ">=5.6",
-        "zircote/swagger-php": "~2.0.7"
+        "zircote/swagger-php": "~2.0.7",
+        "flow/jsonpath": "~0.3.1"
     },
     "require-dev": {
         "symfony/var-dumper": "3.1.0",

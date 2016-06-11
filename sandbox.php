@@ -16,6 +16,13 @@ $operation = $wrapper->getOperationByName('getUserById');
 //dump($operation);
 
 $response = new \Symfony\Component\HttpFoundation\JsonResponse();
-$response->setData(['id' => 1, 'name' => 'Test']);
+$response->setData(
+    [
+        'data' => (object) [
+            'id' => 1,
+            'name' => 'Test'
+        ]
+    ]
+);
 
 $wrapper->assertHttpResponseForOperation($response, $operation);

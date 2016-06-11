@@ -5,6 +5,7 @@
 
 namespace Ovr\Swagger;
 
+use Flow\JSONPath\JSONPath;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -81,6 +82,7 @@ class SwaggerWrapper
             foreach ($path->responses as $response) {
                 if ($response->response == $httpResponse->getStatusCode()) {
                     if ($response->schema) {
+                        /** @var \Swagger\Annotations\Definition|null $scheme */
                         $scheme = null;
 
                         if ($response->schema->ref) {
@@ -89,6 +91,41 @@ class SwaggerWrapper
 
                         if ($scheme) {
                             if ($scheme->required) {
+                                $jsonPath = (new JSONPath(json_decode($httpResponse->getContent())));
+
+                                /** @var \Swagger\Annotations\Property $property */
+                                foreach ($scheme->properties as $property) {
+                                    $key = '$.data..' . $property->property;
+
+                                    $value = $jsonPath->find($key);
+
+                                    switch ($property->type) {
+                                        case 'integer':
+                                            $propertyValue = current($value->data());
+
+                                            if (gettype($propertyValue) != 'integer') {
+                                                throw new \RuntimeException(
+                                                    sprintf(
+                                                        'Property %s type must be %s',
+                                                        $property->property,
+                                                        $property->type
+                                                    )
+                                                );
+                                            }
+                                            break;
+                                    }
+
+                                    /**
+                                     * Property in required
+                                     */
+                                    if (in_array($property->property, $scheme->required)) {
+                                        if (!$value->valid()) {
+                                            throw new \RuntimeException(
+                                                sprintf('Property %s is required', $property->property)
+                                            );
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
