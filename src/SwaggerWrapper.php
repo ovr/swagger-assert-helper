@@ -55,6 +55,23 @@ class SwaggerWrapper
         return null;
     }
 
+    /**
+     * @param string $name
+     * @return null|\Swagger\Annotations\Definition
+     */
+    public function getSchemeByName($name)
+    {
+        if ($this->swagger->definitions) {
+            foreach ($this->swagger->definitions as $definition) {
+                if (strpos($name, $definition->definition) !== false) {
+                    return $definition;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function assertHttpResponseForOperation(Response $httpResponse, \Swagger\Annotations\Operation $path)
     {
         $allFailed = true;
@@ -64,8 +81,15 @@ class SwaggerWrapper
             foreach ($path->responses as $response) {
                 if ($response->response == $httpResponse->getStatusCode()) {
                     if ($response->schema) {
+                        $scheme = null;
+
                         if ($response->schema->ref) {
-                            dump($this->swagger->schemes);
+                            $scheme = $this->getSchemeByName($response->schema->ref);
+                        }
+
+                        if ($scheme) {
+                            if ($scheme->required) {
+                            }
                         }
                     }
 

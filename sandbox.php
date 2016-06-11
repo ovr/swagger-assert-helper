@@ -10,14 +10,12 @@ $swagger = \Swagger\scan(
     ]
 );
 
-
 $wrapper = new \Ovr\Swagger\SwaggerWrapper($swagger);
 $operation = $wrapper->getOperationByName('getUserById');
 
-dump($operation);
+//dump($operation);
 
 $response = new \Symfony\Component\HttpFoundation\JsonResponse();
-$response->setData(['data' => (object) ['id' => 1, 'name' => 'Test']]);
+$response->setData(['id' => 1, 'name' => 'Test']);
 
-$wrapper->assertHttpResponseForOperation($response, $operation);
 $wrapper->assertHttpResponseForOperation($response, $operation);
