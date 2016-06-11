@@ -27,7 +27,7 @@ class SwaggerWrapper
     public function getPathByName($operationId)
     {
         foreach ($this->swagger->paths as $path) {
-            if ($path->operationId = $operationId) {
+            if ($path->operationId == $operationId) {
                 return $path;
             }
         }
@@ -38,13 +38,17 @@ class SwaggerWrapper
 
     /**
      * @param $operationId
-     * @return \Swagger\Annotations\Operation|null
+     * @param string $method
+     * @return null|\Swagger\Annotations\Operation
      */
-    public function getOperationByName($operationId)
+    public function getOperationByName($operationId, $method = 'get')
     {
+        /** @var \Swagger\Annotations\Path $path */
         foreach ($this->swagger->paths as $path) {
-            if ($path->operationId = $operationId) {
-                return $path->get;
+            /** @var \Swagger\Annotations\Operation $operation */
+            $operation = $path->{$method};
+            if ($operation && $operation->operationId == $operationId) {
+                return $operation;
             }
         }
 
@@ -59,6 +63,12 @@ class SwaggerWrapper
             /** @var \Swagger\Annotations\Response $response */
             foreach ($path->responses as $response) {
                 if ($response->response == $httpResponse->getStatusCode()) {
+                    if ($response->schema) {
+                        if ($response->schema->ref) {
+                            dump($this->swagger->schemes);
+                        }
+                    }
+
                     $allFailed = false;
                 }
             }
