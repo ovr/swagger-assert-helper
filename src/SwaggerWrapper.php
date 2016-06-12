@@ -99,11 +99,13 @@ class SwaggerWrapper
 
                                     $value = $jsonPath->find($key);
 
-                                    switch ($property->type) {
-                                        case 'integer':
-                                            $propertyValue = current($value->data());
+                                    $propertyValue = current($value->data());
 
-                                            if (gettype($propertyValue) != 'integer') {
+                                    switch ($property->type) {
+                                        case 'string':
+                                        case 'boolean':
+                                        case 'integer':
+                                            if (gettype($propertyValue) != $property->type) {
                                                 throw new \RuntimeException(
                                                     sprintf(
                                                         'Property %s type must be %s',
@@ -113,6 +115,16 @@ class SwaggerWrapper
                                                 );
                                             }
                                             break;
+                                        case 'number':
+                                            if (gettype($propertyValue) != 'double') {
+                                                throw new \RuntimeException(
+                                                    sprintf(
+                                                        'Property %s type must be %s',
+                                                        $property->property,
+                                                        $property->type
+                                                    )
+                                                );
+                                            }
                                     }
 
                                     /**
