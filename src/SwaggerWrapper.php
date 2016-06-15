@@ -108,9 +108,10 @@ class SwaggerWrapper
                                             if (gettype($propertyValue) != $property->type) {
                                                 throw new \RuntimeException(
                                                     sprintf(
-                                                        'Property %s type must be %s',
+                                                        'Type of the property %s must be %s instead of %s',
                                                         $property->property,
-                                                        $property->type
+                                                        $property->type,
+                                                        gettype($propertyValue)
                                                     )
                                                 );
                                             }
@@ -119,9 +120,10 @@ class SwaggerWrapper
                                             if (gettype($propertyValue) != 'double') {
                                                 throw new \RuntimeException(
                                                     sprintf(
-                                                        'Property %s type must be %s',
+                                                        'Type of the property %s must be %s instead of %s',
                                                         $property->property,
-                                                        $property->type
+                                                        $property->type,
+                                                        gettype($propertyValue)
                                                     )
                                                 );
                                             }
