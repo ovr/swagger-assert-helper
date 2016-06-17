@@ -49,6 +49,8 @@ class SwaggerWrapper
             /** @var \Swagger\Annotations\Operation $operation */
             $operation = $path->{$method};
             if ($operation && $operation->operationId == $operationId) {
+                $operation->path = $this->swagger->basePath . $operation->path;
+                
                 return $operation;
             }
         }
