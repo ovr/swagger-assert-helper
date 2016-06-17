@@ -98,9 +98,16 @@ class SwaggerWrapper
                                     $key = '$.data..' . $property->property;
 
                                     $value = $jsonPath->find($key);
+                                    if (!$value->valid()) {
+                                        throw new \RuntimeException(
+                                            sprintf(
+                                                'Cannot find property "%s" in json',
+                                                $property->property
+                                            )
+                                        );
+                                    }
 
                                     $propertyValue = current($value->data());
-
                                     switch ($property->type) {
                                         case 'string':
                                         case 'boolean':
