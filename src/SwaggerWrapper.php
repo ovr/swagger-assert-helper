@@ -6,7 +6,6 @@
 namespace Ovr\Swagger;
 
 use Flow\JSONPath\JSONPath;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class SwaggerWrapper
@@ -50,7 +49,7 @@ class SwaggerWrapper
             $operation = $path->{$method};
             if ($operation && $operation->operationId == $operationId) {
                 $operation->path = $this->swagger->basePath . $operation->path;
-                
+
                 return $operation;
             }
         }
@@ -75,6 +74,11 @@ class SwaggerWrapper
         return null;
     }
 
+    /**
+     * @param Response $httpResponse
+     * @param \Swagger\Annotations\Operation $path
+     * @return bool
+     */
     public function assertHttpResponseForOperation(Response $httpResponse, \Swagger\Annotations\Operation $path)
     {
         $allFailed = true;
@@ -91,66 +95,8 @@ class SwaggerWrapper
                             $scheme = $this->getSchemeByName($response->schema->ref);
                         }
 
-                        if ($scheme) {
-                            if ($scheme->required) {
-                                $jsonPath = (new JSONPath(json_decode($httpResponse->getContent())));
-
-                                /** @var \Swagger\Annotations\Property $property */
-                                foreach ($scheme->properties as $property) {
-                                    $key = '$.data..' . $property->property;
-
-                                    $value = $jsonPath->find($key);
-                                    if (!$value->valid()) {
-                                        throw new \RuntimeException(
-                                            sprintf(
-                                                'Cannot find property "%s" in json',
-                                                $property->property
-                                            )
-                                        );
-                                    }
-
-                                    $propertyValue = current($value->data());
-                                    switch ($property->type) {
-                                        case 'string':
-                                        case 'boolean':
-                                        case 'integer':
-                                            if (gettype($propertyValue) != $property->type) {
-                                                throw new \RuntimeException(
-                                                    sprintf(
-                                                        'Type of the property %s must be %s instead of %s',
-                                                        $property->property,
-                                                        $property->type,
-                                                        gettype($propertyValue)
-                                                    )
-                                                );
-                                            }
-                                            break;
-                                        case 'number':
-                                            if (gettype($propertyValue) != 'double') {
-                                                throw new \RuntimeException(
-                                                    sprintf(
-                                                        'Type of the property %s must be %s instead of %s',
-                                                        $property->property,
-                                                        $property->type,
-                                                        gettype($propertyValue)
-                                                    )
-                                                );
-                                            }
-                                    }
-
-                                    /**
-                                     * Property in required
-                                     */
-                                    if (in_array($property->property, $scheme->required)) {
-                                        if (!$value->valid()) {
-                                            throw new \RuntimeException(
-                                                sprintf('Property %s is required', $property->property)
-                                            );
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        $jsonPath = (new JSONPath(json_decode($httpResponse->getContent())));
+                        $this->validateScheme($scheme, $jsonPath);
                     }
 
                     $allFailed = false;
@@ -159,5 +105,81 @@ class SwaggerWrapper
         }
 
         return $allFailed;
+    }
+
+    /**
+     * @param \Swagger\Annotations\Definition $scheme
+     * @param JSONPath $jsonPath
+     */
+    protected function validateScheme(\Swagger\Annotations\Definition $scheme, JSONPath $jsonPath)
+    {
+        if ($scheme->required) {
+            foreach ($scheme->required as $requiredPropertyName) {
+                foreach ($scheme->properties as $property) {
+                    if ($property->property == $requiredPropertyName) {
+                        $property->required = true;
+                    }
+                }
+            }
+        }
+
+        /** @var \Swagger\Annotations\Property $property */
+        foreach ($scheme->properties as $property) {
+            $value = $jsonPath->find('$..' . $property->property);
+            if (!$value->valid()) {
+                if ($property->required) {
+                    throw new \RuntimeException(
+                        sprintf(
+                            'Cannot find property "%s" in json',
+                            $property->property
+                        )
+                    );
+                } else {
+                    continue;
+                }
+            }
+
+            if ($property->items) {
+                $scheme = $this->getSchemeByName($property->items);
+                $this->validateScheme($scheme, $jsonPath->find('$..' . $property->property));
+            }
+
+            $this->validateProperty($property, current($value->data()));
+        }
+    }
+
+    /**
+     * @param \Swagger\Annotations\Property $property
+     * @param $value
+     */
+    protected function validateProperty(\Swagger\Annotations\Property $property, $value)
+    {
+        switch ($property->type) {
+            case 'string':
+            case 'boolean':
+            case 'integer':
+                if (gettype($value) != $property->type && $property->required) {
+                    throw new \RuntimeException(
+                        sprintf(
+                            'Type of the property %s must be %s instead of %s',
+                            $property->property,
+                            $property->type,
+                            gettype($value)
+                        )
+                    );
+                }
+                break;
+            case 'number':
+                if (gettype($value) != 'double' && $property->required) {
+                    throw new \RuntimeException(
+                        sprintf(
+                            'Type of the property %s must be %s instead of %s',
+                            $property->property,
+                            $property->type,
+                            gettype($value)
+                        )
+                    );
+                }
+        }
     }
 }
