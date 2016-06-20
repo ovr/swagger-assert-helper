@@ -29,6 +29,14 @@ trait SymfonyTrait
             }
         }
 
+        if ($operation->parameters) {
+            foreach ($operation->parameters as $parameter) {
+                if ($parameter->in == 'formData') {
+                    $request->request->set($parameter->name, $parameters[$parameter->name]);
+                }
+            }
+        }
+
         $request->server->set('REQUEST_URI', $path);
         $request->server->set('REQUEST_METHOD', $operation->method);
 
