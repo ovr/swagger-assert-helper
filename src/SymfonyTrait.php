@@ -36,6 +36,12 @@ trait SymfonyTrait
                         case 'path':
                             $path = str_replace('{' . $parameter->name . '}', $parameters[$parameter->name], $path);
                             break;
+                        case 'header':
+                            $request->headers->set($parameter->name, $parameters[$parameter->name]);
+                            break;
+                        case 'query':
+                            $request->query->set($parameter->name, $parameters[$parameter->name]);
+                            break;
                         case 'formData':
                             $request->request->set($parameter->name, $parameters[$parameter->name]);
                             break;
