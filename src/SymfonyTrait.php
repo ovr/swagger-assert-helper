@@ -5,8 +5,11 @@
 
 namespace Ovr\Swagger;
 
+use InvalidArgumentException;
+use RuntimeException;
 use Swagger\Annotations\Operation;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 trait SymfonyTrait
 {
@@ -15,24 +18,43 @@ trait SymfonyTrait
      *
      * @param Operation $operation
      * @param array $parameters
+     * @param bool $skipRequired
      * @return Request
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
-    public function makeRequestByOperation(Operation $operation, array $parameters = [])
+    public function makeRequestByOperation(Operation $operation, array $parameters = [], $skipRequired = false)
     {
         $request = new Request();
 
         $path = $operation->path;
 
-        if ($parameters) {
-            foreach ($parameters as $key => $value) {
-                $path = str_replace('{' . $key . '}', $value, $path);
-            }
-        }
-
         if ($operation->parameters) {
             foreach ($operation->parameters as $parameter) {
-                if ($parameter->in == 'formData') {
-                    $request->request->set($parameter->name, $parameters[$parameter->name]);
+                if (isset($parameters[$parameter->name])) {
+                    switch ($parameter->in) {
+                        case 'path':
+                            $path = str_replace('{' . $parameter->name . '}', $parameters[$parameter->name], $path);
+                            break;
+                        case 'formData':
+                            $request->request->set($parameter->name, $parameters[$parameter->name]);
+                            break;
+                        default:
+                            throw new RuntimeException(
+                                sprintf(
+                                    'Parameter "%s" with ->in = "%s" is not supported',
+                                    $parameter->parameter,
+                                    $parameter->in
+                                )
+                            );
+                    }
+                } elseif ($parameter->required && !$skipRequired) {
+                    throw new InvalidArgumentException(
+                        sprintf(
+                            'Parameter "%s" is required, please pass value for this in $parameters',
+                            $parameter->name
+                        )
+                    );
                 }
             }
         }
@@ -41,5 +63,16 @@ trait SymfonyTrait
         $request->server->set('REQUEST_METHOD', $operation->method);
 
         return $request;
+    }
+
+    public function assertHttpResponseForOperation(Response $response, Operation $operation)
+    {
+        $contentType = $response->headers->get('content-type');
+        switch ($contentType) {
+            case 'application/json':
+                break;
+            default:
+                throw new RuntimeException('Content type, ' . $contentType . ' is not supported');
+        }
     }
 }
