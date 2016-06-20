@@ -7,6 +7,7 @@ namespace Ovr\Swagger;
 
 use Flow\JSONPath\JSONPath;
 use RuntimeException;
+use Swagger\Annotations\Operation;
 use Swagger\Annotations\Response as SwaggerResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -41,13 +42,13 @@ class SwaggerWrapper
     /**
      * @param $operationId
      * @param string $method
-     * @return null|\Swagger\Annotations\Operation
+     * @return null|Operation
      */
     public function getOperationByName($operationId, $method = 'get')
     {
         /** @var \Swagger\Annotations\Path $path */
         foreach ($this->swagger->paths as $path) {
-            /** @var \Swagger\Annotations\Operation $operation */
+            /** @var Operation $operation */
             $operation = $path->{$method};
             if ($operation && $operation->operationId == $operationId) {
                 $operation->path = $this->swagger->basePath . $operation->path;
@@ -77,36 +78,49 @@ class SwaggerWrapper
     }
 
     /**
-     * @param Response $httpResponse
-     * @param \Swagger\Annotations\Operation $path
-     * @return bool
+     * @param Operation $path
+     * @param int $statusCode
+     * @return null|SwaggerResponse
      */
-    public function assertHttpResponseForOperation(Response $httpResponse, \Swagger\Annotations\Operation $path)
+    public function findResponseByStatusCode(Operation $path, $statusCode = 200)
     {
-        $allFailed = true;
-
         if ($path->responses) {
-            /** @var SwaggerResponse $response */
             foreach ($path->responses as $response) {
-                if ($response->response == $httpResponse->getStatusCode()) {
-                    if ($response->schema) {
-                        /** @var \Swagger\Annotations\Definition|null $scheme */
-                        $scheme = null;
-
-                        if ($response->schema->ref) {
-                            $scheme = $this->getSchemeByName($response->schema->ref);
-                        }
-
-                        $jsonPath = (new JSONPath(json_decode($httpResponse->getContent())));
-                        $this->validateScheme($scheme, $jsonPath);
-                    }
-
-                    $allFailed = false;
+                if ($response->response == $statusCode) {
+                    return $response;
                 }
             }
         }
 
-        return $allFailed;
+        return null;
+    }
+
+    /**
+     * @param Response $httpResponse
+     * @param Operation $path
+     * @param int $statusCode
+     * @throws \RuntimeException
+     */
+    public function assertHttpResponseForOperation(Response $httpResponse, Operation $path, $statusCode = 200)
+    {
+        $response = $this->findResponseByStatusCode($path, $statusCode);
+        if ($response) {
+            if ($response->schema) {
+                /** @var \Swagger\Annotations\Definition|null $scheme */
+                $scheme = null;
+
+                if ($response->schema->ref) {
+                    $scheme = $this->getSchemeByName($response->schema->ref);
+                }
+
+                $jsonPath = (new JSONPath(json_decode($httpResponse->getContent())));
+                $this->validateScheme($scheme, $jsonPath);
+            }
+
+            return;
+        }
+
+        throw new RuntimeException('Cannot find Response in Operation for ' . $statusCode . ' status code');
     }
 
     /**
