@@ -8,6 +8,7 @@ namespace Ovr\Swagger;
 use Flow\JSONPath\JSONPath;
 use RuntimeException;
 use Swagger\Annotations\Operation;
+use Swagger\Annotations\Property;
 use Swagger\Annotations\Response as SwaggerResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,7 +38,6 @@ class SwaggerWrapper
 
         return null;
     }
-
 
     /**
      * @param $operationId
@@ -168,7 +168,7 @@ class SwaggerWrapper
             }
         }
 
-        /** @var \Swagger\Annotations\Property $property */
+        /** @var Property $property */
         foreach ($scheme->properties as $property) {
             $value = $jsonPath->find('$..' . $property->property);
             if (!$value->valid()) {
@@ -194,10 +194,11 @@ class SwaggerWrapper
     }
 
     /**
-     * @param \Swagger\Annotations\Property $property
+     * @param Property $property
      * @param $value
+     * @throws RuntimeException
      */
-    protected function validateProperty(\Swagger\Annotations\Property $property, $value)
+    protected function validateProperty(Property $property, $value)
     {
         switch ($property->type) {
             case 'string':
@@ -210,6 +211,15 @@ class SwaggerWrapper
                             $property->property,
                             $property->type,
                             gettype($value)
+                        )
+                    );
+                } elseif (!$this->checkFormat($property, $value)) {
+                    throw new RuntimeException(
+                        sprintf(
+                            'Format of the "%s" property (value "%s") is not valid, need "%s" format',
+                            $property->property,
+                            $value,
+                            $property->format
                         )
                     );
                 }
@@ -226,5 +236,36 @@ class SwaggerWrapper
                     );
                 }
         }
+    }
+
+    /**
+     * @param Property $property
+     * @param $value
+     * @return bool
+     */
+    protected function checkFormat(Property $property, $value)
+    {
+        if ($property->format) {
+            switch ($property->format) {
+                case 'date':
+                    $parsedDate = date_parse($value);
+                    return (
+                        $parsedDate
+                        && $parsedDate['year'] !== false
+                        && $parsedDate['month'] !== false
+                        && $parsedDate['day'] !== false
+                    );
+                case 'date-time':
+                    $parsedDate = date_parse($value);
+                    return (
+                        $parsedDate
+                        && $parsedDate['hour'] !== false
+                        && $parsedDate['minute'] !== false
+                        && $parsedDate['second'] !== false
+                    );
+            }
+        }
+
+        return true;
     }
 }
