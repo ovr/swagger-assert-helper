@@ -6,6 +6,8 @@
 namespace Ovr\Swagger;
 
 use Flow\JSONPath\JSONPath;
+use RuntimeException;
+use Swagger\Annotations\Response as SwaggerResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class SwaggerWrapper
@@ -84,7 +86,7 @@ class SwaggerWrapper
         $allFailed = true;
 
         if ($path->responses) {
-            /** @var \Swagger\Annotations\Response $response */
+            /** @var SwaggerResponse $response */
             foreach ($path->responses as $response) {
                 if ($response->response == $httpResponse->getStatusCode()) {
                     if ($response->schema) {
@@ -108,6 +110,35 @@ class SwaggerWrapper
     }
 
     /**
+     * @param Response $httpResponse
+     * @param SwaggerResponse $response
+     */
+    public function assertHttpResponseForOperationResponse(Response $httpResponse, SwaggerResponse $response)
+    {
+        if ($response->response == $httpResponse->getStatusCode()) {
+            if ($response->schema) {
+                /** @var \Swagger\Annotations\Definition|null $scheme */
+                $scheme = null;
+
+                if ($response->schema->ref) {
+                    $scheme = $this->getSchemeByName($response->schema->ref);
+                }
+
+                $jsonPath = (new JSONPath(json_decode($httpResponse->getContent())));
+                $this->validateScheme($scheme, $jsonPath);
+            }
+        } else {
+            throw new RuntimeException(
+                sprintf(
+                    'Response code is not valid, expected: "%s", actual: "%s"',
+                    $response->response,
+                    $httpResponse->getStatusCode()
+                )
+            );
+        }
+    }
+
+    /**
      * @param \Swagger\Annotations\Definition $scheme
      * @param JSONPath $jsonPath
      */
@@ -128,7 +159,7 @@ class SwaggerWrapper
             $value = $jsonPath->find('$..' . $property->property);
             if (!$value->valid()) {
                 if ($property->required) {
-                    throw new \RuntimeException(
+                    throw new RuntimeException(
                         sprintf(
                             'Cannot find property "%s" in json',
                             $property->property
@@ -159,7 +190,7 @@ class SwaggerWrapper
             case 'boolean':
             case 'integer':
                 if (gettype($value) != $property->type && $property->required) {
-                    throw new \RuntimeException(
+                    throw new RuntimeException(
                         sprintf(
                             'Type of the property %s must be %s instead of %s',
                             $property->property,
@@ -171,7 +202,7 @@ class SwaggerWrapper
                 break;
             case 'number':
                 if (gettype($value) != 'double' && $property->required) {
-                    throw new \RuntimeException(
+                    throw new RuntimeException(
                         sprintf(
                             'Type of the property %s must be %s instead of %s',
                             $property->property,
