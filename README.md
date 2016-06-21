@@ -3,9 +3,8 @@ Swagger Assert Helper
 
 This library bring support for:
  
-- Asserting Swagger Response Scheme to HttpResponse
-- Making HttpRequest by Swagger Path
-
+- Asserting HTTP Response with Swagger Response Scheme
+- Making HTTP Request by Swagger Path
 
 # LICENSE
 
