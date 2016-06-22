@@ -16,7 +16,7 @@
         "phpunit/phpunit": "~5.4.6",
         "symfony/var-dumper": "3.0.0",
         "symfony/http-foundation": "3.0.0",
-        "illuminate/http": "5.2.29",
+        "illuminate/http": "5.2.7",
         "zendframework/zend-http": "2.5.4",
         "slim/slim": "3.0.0"
     },
