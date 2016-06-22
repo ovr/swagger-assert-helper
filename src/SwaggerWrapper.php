@@ -19,6 +19,15 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
      */
     protected $swagger;
 
+    protected static $possiblePathMethods = [
+        'get',
+        'post',
+        'put',
+        'delete',
+        'head',
+        'patch'
+    ];
+
     public function __construct(\Swagger\Annotations\Swagger $swagger)
     {
         $this->swagger = $swagger;
@@ -40,20 +49,35 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
     }
 
     /**
-     * @param $operationId
-     * @param string $method
+     * @param string $operationId
+     * @param string|null $method Will be removed in feature
      * @return null|Operation
      */
-    public function getOperationByName($operationId, $method = 'get')
+    public function getOperationByName($operationId, $method = null)
     {
-        /** @var \Swagger\Annotations\Path $path */
-        foreach ($this->swagger->paths as $path) {
-            /** @var Operation $operation */
-            $operation = $path->{$method};
-            if ($operation && $operation->operationId == $operationId) {
-                $operation->path = $this->swagger->basePath . $operation->path;
+        if ($method) {
+            /** @var \Swagger\Annotations\Path $path */
+            foreach ($this->swagger->paths as $path) {
+                /** @var Operation|null $operation */
+                $operation = $path->{$method};
+                if ($operation && $operation->operationId == $operationId) {
+                    $operation->path = $this->swagger->basePath . $operation->path;
 
-                return $operation;
+                    return $operation;
+                }
+            }
+        } else {
+            /** @var \Swagger\Annotations\Path $path */
+            foreach ($this->swagger->paths as $path) {
+                foreach (self::$possiblePathMethods as $possiblePathMethod) {
+                    /** @var Operation|null $operation */
+                    $operation = $path->{$possiblePathMethod};
+                    if ($operation && $operation->operationId == $operationId) {
+                        $operation->path = $this->swagger->basePath . $operation->path;
+
+                        return $operation;
+                    }
+                }
             }
         }
 
