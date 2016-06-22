@@ -11,13 +11,20 @@ class LaravelTraitTest extends AbstractTraitTestCase
 {
     use \Ovr\Swagger\LaravelTrait;
 
-    public function testHelper()
+    /**
+     * @dataProvider getDataProviderForSimpleOperations
+     *
+     * @param string $operationId
+     * @param string $url
+     * @param array $parameters
+     */
+    public function testMakeRequestByOperationSimpleSuccess($operationId, $url, array $parameters)
     {
-        $operation = $this->getSwaggerWrapper()->getOperationByName('getUserById');
+        $operation = $this->getSwaggerWrapper()->getOperationByName($operationId);
 
-        $request = $this->makeRequestByOperation($operation, ['id' => 1], false);
+        $request = $this->makeRequestByOperation($operation, $parameters, false);
         parent::assertInstanceOf(Request::class, $request);
-        parent::assertSame(Request::METHOD_GET, $request->getMethod());
-        parent::assertSame('/v1/user/1', $request->getRequestUri());
+        parent::assertSame(strtoupper($operation->method), $request->getMethod());
+        parent::assertSame($url, $request->getRequestUri());
     }
 }

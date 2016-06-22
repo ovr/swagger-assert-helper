@@ -18,4 +18,41 @@ abstract class AbstractTraitTestCase extends \PHPUnit_Framework_TestCase
             )
         );
     }
+
+    /**
+     * @return array
+     */
+    public function getDataProviderForSimpleOperations()
+    {
+        return [
+            [
+                'createUser',
+                '/v1/user',
+                [
+                    'id' => 1
+                ]
+            ],
+            [
+                'getUserById',
+                '/v1/user/1',
+                [
+                    'id' => 1
+                ]
+            ],
+            [
+                'updateUserById',
+                '/v1/user/1',
+                [
+                    'id' => 1
+                ]
+            ],
+            [
+                'deleteUserById',
+                '/v1/user/1',
+                [
+                    'id' => 1
+                ]
+            ]
+        ];
+    }
 }
