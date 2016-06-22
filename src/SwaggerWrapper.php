@@ -12,7 +12,7 @@ use Swagger\Annotations\Property;
 use Swagger\Annotations\Response as SwaggerResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class SwaggerWrapper
+class SwaggerWrapper extends \PHPUnit_Framework_Assert
 {
     /**
      * @var \Swagger\Annotations\Swagger
@@ -105,6 +105,12 @@ class SwaggerWrapper
     {
         $response = $this->findResponseByStatusCode($path, $statusCode);
         if ($response) {
+            parent::assertEquals(
+                $statusCode,
+                $httpResponse->getStatusCode(),
+                'HTTP Response Code must equals with ' . $statusCode
+            );
+
             if ($response->schema) {
                 /** @var \Swagger\Annotations\Definition|null $scheme */
                 $scheme = null;
@@ -129,26 +135,22 @@ class SwaggerWrapper
      */
     public function assertHttpResponseForOperationResponse(Response $httpResponse, SwaggerResponse $response)
     {
-        if ($response->response == $httpResponse->getStatusCode()) {
-            if ($response->schema) {
-                /** @var \Swagger\Annotations\Definition|null $scheme */
-                $scheme = null;
+        parent::assertEquals(
+            $response->response,
+            $httpResponse->getStatusCode(),
+            'HTTP Response Code must equals with ' . $response->response
+        );
 
-                if ($response->schema->ref) {
-                    $scheme = $this->getSchemeByName($response->schema->ref);
-                }
+        if ($response->schema) {
+            /** @var \Swagger\Annotations\Definition|null $scheme */
+            $scheme = null;
 
-                $jsonPath = (new JSONPath(json_decode($httpResponse->getContent())));
-                $this->validateScheme($scheme, $jsonPath);
+            if ($response->schema->ref) {
+                $scheme = $this->getSchemeByName($response->schema->ref);
             }
-        } else {
-            throw new RuntimeException(
-                sprintf(
-                    'Response code is not valid, expected: "%s", actual: "%s"',
-                    $response->response,
-                    $httpResponse->getStatusCode()
-                )
-            );
+
+            $jsonPath = (new JSONPath(json_decode($httpResponse->getContent())));
+            $this->validateScheme($scheme, $jsonPath);
         }
     }
 
