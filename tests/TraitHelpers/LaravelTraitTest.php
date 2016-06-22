@@ -5,7 +5,7 @@
 
 namespace Tests\TraitHelpers;
 
-use Symfony\Component\HttpFoundation\Request;
+use Illuminate\Http\Request;
 
 class LaravelTraitTest extends \PHPUnit_Framework_TestCase
 {
