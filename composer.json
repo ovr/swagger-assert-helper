@@ -24,5 +24,10 @@
         "psr-4": {
             "Ovr\\Swagger\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     }
 }
