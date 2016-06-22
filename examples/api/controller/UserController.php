@@ -38,7 +38,7 @@ class UserController
      * @SWG\Post(
      * 		tags={"User"},
      * 		path="/user",
-     * 		operationId="createUserById",
+     * 		operationId="createUser",
      * 		summary="Find user by $id",
      * 		@SWG\Response(
      * 			response=200,
