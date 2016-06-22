@@ -7,18 +7,9 @@ namespace Tests\TraitHelpers;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class SymfonyTraitTest extends \PHPUnit_Framework_TestCase
+class SymfonyTraitTest extends AbstractTraitTestCase
 {
     use \Ovr\Swagger\SymfonyTrait;
-
-    protected function getSwaggerWrapper()
-    {
-        return new \Ovr\Swagger\SwaggerWrapper(
-            \Swagger\scan(
-                __DIR__ . '/../../examples'
-            )
-        );
-    }
 
     public function testHelper()
     {

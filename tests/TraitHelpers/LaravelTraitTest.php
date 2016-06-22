@@ -7,18 +7,9 @@ namespace Tests\TraitHelpers;
 
 use Illuminate\Http\Request;
 
-class LaravelTraitTest extends \PHPUnit_Framework_TestCase
+class LaravelTraitTest extends AbstractTraitTestCase
 {
     use \Ovr\Swagger\LaravelTrait;
-
-    protected function getSwaggerWrapper()
-    {
-        return new \Ovr\Swagger\SwaggerWrapper(
-            \Swagger\scan(
-                __DIR__ . '/../../examples'
-            )
-        );
-    }
 
     public function testHelper()
     {

@@ -7,18 +7,9 @@ namespace Tests\TraitHelpers;
 
 use Zend\Http\Request;
 
-class ZendTraitTest extends \PHPUnit_Framework_TestCase
+class ZendTraitTest extends AbstractTraitTestCase
 {
     use \Ovr\Swagger\ZendTrait;
-
-    protected function getSwaggerWrapper()
-    {
-        return new \Ovr\Swagger\SwaggerWrapper(
-            \Swagger\scan(
-                __DIR__ . '/../../examples'
-            )
-        );
-    }
 
     public function testHelper()
     {
