@@ -55,12 +55,12 @@ class UserController
     {
 
     }
-    
+
     /**
      * @SWG\Put(
      * 		tags={"User"},
      * 		path="/user/{id}",
-     * 		operationId="deleteUserById",
+     * 		operationId="updateUserById",
      * 		summary="Find user by $id",
      * 		@SWG\Parameter(
      * 			name="id",
