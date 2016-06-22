@@ -16,7 +16,8 @@
         "phpunit/phpunit": "~5.4.6",
         "symfony/var-dumper": "3.0.0",
         "symfony/http-foundation": "3.0.0",
-        "laravel/framework": "5.2.29"
+        "laravel/framework": "5.2.29",
+        "zendframework/zend-http": "2.5.4"
     },
     "autoload": {
         "psr-4": {
