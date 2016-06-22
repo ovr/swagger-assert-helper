@@ -10,6 +10,8 @@
  *  @SWG\Property(property="id", type="integer", format="int64"),
  *  @SWG\Property(property="name", type="string"),
  *  @SWG\Property(property="is_admin", type="boolean"),
+ *  @SWG\Property(property="created", type="string", format="date"),
+ *  @SWG\Property(property="last_login", type="string", format="date-time"),
  * )
  */
 class User
