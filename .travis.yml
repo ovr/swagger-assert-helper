@@ -13,6 +13,11 @@ cache:
     - vendor
     - $HOME/.composer/cache
 
+matrix:
+  fast_finish: true
+  allow_failures:
+    - php: hhvm
+
 install:
   - composer self-update --quiet
   - COMPOSER_DISCARD_CHANGES=true composer --prefer-source update --no-interaction --no-progress -o
