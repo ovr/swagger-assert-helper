@@ -189,6 +189,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                 foreach ($scheme->properties as $property) {
                     if ($property->property == $requiredPropertyName) {
                         $property->required = true;
+                        break;
                     }
                 }
             }
