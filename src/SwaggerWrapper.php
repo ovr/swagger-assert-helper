@@ -7,6 +7,7 @@ namespace Ovr\Swagger;
 
 use Flow\JSONPath\JSONPath;
 use RuntimeException;
+use Swagger\Annotations\Definition;
 use Swagger\Annotations\Operation;
 use Swagger\Annotations\Property;
 use Swagger\Annotations\Response as SwaggerResponse;
@@ -86,7 +87,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
 
     /**
      * @param string $name
-     * @return null|\Swagger\Annotations\Definition
+     * @return null|Definition
      */
     public function getSchemeByName($name)
     {
@@ -136,7 +137,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
             );
 
             if ($response->schema) {
-                /** @var \Swagger\Annotations\Definition|null $scheme */
+                /** @var Definition|null $scheme */
                 $scheme = null;
 
                 if ($response->schema->ref) {
@@ -166,7 +167,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
         );
 
         if ($response->schema) {
-            /** @var \Swagger\Annotations\Definition|null $scheme */
+            /** @var Definition|null $scheme */
             $scheme = null;
 
             if ($response->schema->ref) {
@@ -179,10 +180,9 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
     }
 
     /**
-     * @param \Swagger\Annotations\Definition $scheme
-     * @param JSONPath $jsonPath
+     * @param Definition $scheme
      */
-    protected function validateScheme(\Swagger\Annotations\Definition $scheme, JSONPath $jsonPath)
+    public function flagPropertyAsRequiredFromDefinition(Definition $scheme)
     {
         if ($scheme->required) {
             foreach ($scheme->required as $requiredPropertyName) {
@@ -207,6 +207,15 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                 );
             }
         }
+    }
+
+    /**
+     * @param Definition $scheme
+     * @param JSONPath $jsonPath
+     */
+    protected function validateScheme(Definition $scheme, JSONPath $jsonPath)
+    {
+        $this->flagPropertyAsRequiredFromDefinition($scheme);
 
         /** @var Property $property */
         foreach ($scheme->properties as $property) {
