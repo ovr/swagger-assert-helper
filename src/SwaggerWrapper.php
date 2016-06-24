@@ -186,12 +186,25 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
     {
         if ($scheme->required) {
             foreach ($scheme->required as $requiredPropertyName) {
+                $find = false;
+
                 foreach ($scheme->properties as $property) {
                     if ($property->property == $requiredPropertyName) {
+                        $find = true;
                         $property->required = true;
+
                         break;
                     }
                 }
+
+                parent::assertTrue(
+                    $find,
+                    sprintf(
+                        'Cannot find property with name %s to mark it as required, on scheme %s',
+                        $requiredPropertyName,
+                        $scheme->definition
+                    )
+                );
             }
         }
 
