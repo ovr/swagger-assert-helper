@@ -157,7 +157,7 @@ class UserController
      * 		)
      * )
      */
-    public function friendsAction()
+    public function getFriendsAction()
     {
         $friends = [];
 

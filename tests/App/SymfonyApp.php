@@ -16,8 +16,18 @@ class SymfonyApp
         $response = new JsonResponse();
 
         $controller = new UserController();
-        $response->setData($controller->getAction());
+        $result = false;
 
+        switch ($request->getRequestUri()) {
+            case '/v1/user/1':
+                $result = $controller->getAction();
+                break;
+            case '/v1/user/1/friends':
+                $result = $controller->getFriendsAction();
+                break;
+        }
+
+        $response->setData($result);
         return $response;
     }
 }
