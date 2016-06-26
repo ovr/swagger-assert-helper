@@ -16,6 +16,16 @@ use Symfony\Component\HttpFoundation\Response;
 class SwaggerWrapper extends \PHPUnit_Framework_Assert
 {
     /**
+     * Skip Required check on Property
+     */
+    const SKIP_REQUIRED = 2;
+
+    /**
+     * Skip Enum check on Property
+     */
+    const SKIP_ENUM_CHECK = 4;
+
+    /**
      * @var \Swagger\Annotations\Swagger
      */
     protected $swagger;

@@ -18,12 +18,12 @@ trait SymfonyTrait
      *
      * @param Operation $operation
      * @param array $parameters
-     * @param bool $skipRequired
+     * @param int $options BitMask of options to skip or something else
      * @return Request
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function makeRequestByOperation(Operation $operation, array $parameters = [], $skipRequired = false)
+    public function makeRequestByOperation(Operation $operation, array $parameters = [], $options = 0)
     {
         $request = new Request();
 
@@ -33,7 +33,7 @@ trait SymfonyTrait
             foreach ($operation->parameters as $parameter) {
                 if (isset($parameters[$parameter->name])) {
                     $parameterValue = $parameters[$parameter->name];
-                    if ($parameter->enum) {
+                    if ($parameter->enum && !($operation & SwaggerWrapper::SKIP_ENUM_CHECK)) {
                         if (!in_array($parameterValue, $parameter->enum)) {
                             throw new InvalidArgumentException(
                                 sprintf(
@@ -68,7 +68,7 @@ trait SymfonyTrait
                                 )
                             );
                     }
-                } elseif ($parameter->required && !$skipRequired) {
+                } elseif ($parameter->required && !($operation & SwaggerWrapper::SKIP_REQUIRED)) {
                     throw new InvalidArgumentException(
                         sprintf(
                             'Parameter "%s" is required, please pass value for this in $parameters',
