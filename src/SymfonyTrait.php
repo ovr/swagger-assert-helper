@@ -33,7 +33,7 @@ trait SymfonyTrait
             foreach ($operation->parameters as $parameter) {
                 if (isset($parameters[$parameter->name])) {
                     $parameterValue = $parameters[$parameter->name];
-                    if ($parameter->enum && !($operation & SwaggerWrapper::SKIP_ENUM_CHECK)) {
+                    if ($parameter->enum && !($options & SwaggerWrapper::SKIP_ENUM_CHECK)) {
                         if (!in_array($parameterValue, $parameter->enum)) {
                             throw new InvalidArgumentException(
                                 sprintf(
@@ -68,7 +68,7 @@ trait SymfonyTrait
                                 )
                             );
                     }
-                } elseif ($parameter->required && !($operation & SwaggerWrapper::SKIP_REQUIRED)) {
+                } elseif ($parameter->required && !($options & SwaggerWrapper::SKIP_REQUIRED)) {
                     throw new InvalidArgumentException(
                         sprintf(
                             'Parameter "%s" is required, please pass value for this in $parameters',
