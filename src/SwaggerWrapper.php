@@ -220,21 +220,9 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
     }
 
     /**
-     * @param Property $property
-     * @return string
-     */
-    protected function getJsonPath(Property $property)
-    {
-        if ($property->type == 'array') {
-            return '$.' . $property->property;
-        }
-
-        return '$..' . $property->property;
-    }
-
-    /**
      * @param Definition $scheme
      * @param JSONPath $jsonPath
+     * @throws \RuntimeException
      */
     protected function validateScheme(Definition $scheme, JSONPath $jsonPath)
     {
@@ -242,7 +230,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
 
         /** @var Property $property */
         foreach ($scheme->properties as $property) {
-            $value = $jsonPath->find($this->getJsonPath($property));
+            $value = $jsonPath->find('$.' . $property->property);
             if (!$value->valid()) {
                 if ($property->required) {
                     throw new RuntimeException(
@@ -262,7 +250,9 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                 $scheme = $this->getSchemeByName($property->items);
 
                 if ($iterable) {
-                    $this->validateScheme($scheme, $value);
+                    foreach (current($value->data()) as $entity) {
+                        $this->validateScheme($scheme, new JSONPath($entity));
+                    }
                 }
             }
         }
@@ -301,9 +291,9 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                                 )
                             );
                         }
-
-                        return (bool) count($value);
                     }
+
+                    return (bool) count($value);
                 }
                 break;
             case 'boolean':
