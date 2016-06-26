@@ -113,4 +113,48 @@ class UserController
     {
 
     }
+
+
+    /**
+     * @SWG\Delete(
+     * 		tags={"User"},
+     * 		path="/user/{id}/friends",
+     * 		operationId="getUserFriendsById",
+     * 		summary="Get user friends by $id",
+     * 		@SWG\Parameter(
+     * 			name="id",
+     * 			description="$id of the specified",
+     * 			in="path",
+     * 			required=true,
+     * 			type="string"
+     * 		),
+     * 		@SWG\Parameter(
+     * 			name="limit",
+     * 			description="Limit",
+     * 			in="query",
+     * 			required=false,
+     * 			type="integer"
+     * 		),
+     * 		@SWG\Parameter(
+     * 			name="offset",
+     * 			description="Offset",
+     * 			in="query",
+     * 			required=false,
+     * 			type="integer"
+     * 		),
+     * 		@SWG\Response(
+     * 			response=200,
+     * 			description="success",
+     * 			@SWG\Schema(ref="#/definitions/UserResponse")
+     * 		),
+     * 		@SWG\Response(
+     * 			response=404,
+     * 			description="Not found"
+     * 		)
+     * )
+     */
+    public function friendsAction()
+    {
+
+    }
 }
