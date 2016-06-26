@@ -256,36 +256,57 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                 }
             }
 
-            $this->validateProperty($property, current($value->data()));
-            
+            $iterable = $this->validateProperty($property, current($value->data()));
+
             if ($property->items) {
                 $scheme = $this->getSchemeByName($property->items);
-                $this->validateScheme($scheme, $jsonPath->find($this->getJsonPath($property)));
+
+                if ($iterable) {
+                    $this->validateScheme($scheme, $value);
+                }
             }
         }
     }
 
     /**
      * @param Property $property
-     * @param $value
+     * @param mixed $value
+     * @return bool True if it's possible to iterate this property
      * @throws RuntimeException
      */
     protected function validateProperty(Property $property, $value)
     {
         switch ($property->type) {
-            case 'boolean':
             case 'array':
-                if (gettype($value) != $property->type && $property->required) {
-                    throw new RuntimeException(
-                        sprintf(
-                            'Type of the property %s must be %s instead of %s',
-                            $property->property,
-                            $property->type,
-                            gettype($value)
-                        )
-                    );
+                if ($property->required) {
+                    if (gettype($value) != $property->type) {
+                        throw new RuntimeException(
+                            sprintf(
+                                'Type of the property %s must be %s instead of %s actual',
+                                $property->property,
+                                $property->type,
+                                gettype($value)
+                            )
+                        );
+                    }
+
+                    if ($property->minItems) {
+                        if ($property->minItems < count($value)) {
+                            throw new RuntimeException(
+                                sprintf(
+                                    'Defined minItems of the property %s must be %s instead of %s actual',
+                                    $property->property,
+                                    $property->minItems,
+                                    count($value)
+                                )
+                            );
+                        }
+
+                        return (bool) count($value);
+                    }
                 }
                 break;
+            case 'boolean':
             case 'string':
             case 'integer':
                 if (gettype($value) != $property->type && $property->required) {
@@ -320,6 +341,8 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                     );
                 }
         }
+
+        return false;
     }
 
     /**
