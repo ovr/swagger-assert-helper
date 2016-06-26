@@ -3,6 +3,10 @@
  * @author Patsura Dmitry https://github.com/ovr <talk@dmtry.me>
  */
 
+namespace Api\Model;
+
+use DateTime;
+
 /**
  * @SWG\Definition(
  *  definition = "UserResponse",
@@ -22,8 +26,14 @@ class User
 
     protected $is_admin;
 
+    /**
+     * @var DateTime
+     */
     protected $created;
 
+    /**
+     * @var DateTime
+     */
     protected $last_login;
 
     /**
@@ -31,10 +41,15 @@ class User
      */
     public static function generateFake()
     {
+        $faker = \Faker\Factory::create();
+
         $user = new User();
         $user->id = mt_rand(0, mt_getrandmax());
         $user->is_admin = mt_rand(0, 100) < 10;
-        
+        $user->name = $faker->name;
+        $user->created = new DateTime();
+        $user->last_login = new DateTime();
+
         return $user;
     }
 
@@ -47,8 +62,8 @@ class User
             'id' => $this->id,
             'name' => $this->name,
             'is_admin' => $this->is_admin,
-            'created' => $this->is_admin,
-            'last_login' => $this->is_admin,
+            'created' => $this->created->format('Y-m-d'),
+            'last_login' => $this->last_login->format('Y-m-d H:i:s')
         ];
     }
 }

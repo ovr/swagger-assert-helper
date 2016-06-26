@@ -3,6 +3,10 @@
  * @author Patsura Dmitry https://github.com/ovr <talk@dmtry.me>
  */
 
+namespace Api\Controller;
+
+use Api\Model\User;
+
 class UserController
 {
     /**

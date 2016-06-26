@@ -3,6 +3,8 @@
  * @author Patsura Dmitry https://github.com/ovr <talk@dmtry.me>
  */
 
+namespace Api\Controller;
+
 /**
  * @SWG\Swagger(
  * 		basePath="/v1",
