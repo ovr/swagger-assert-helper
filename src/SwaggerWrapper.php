@@ -220,6 +220,19 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
     }
 
     /**
+     * @param Property $property
+     * @return string
+     */
+    protected function getJsonPath(Property $property)
+    {
+        if ($property->type == 'array') {
+            return '$.' . $property->property;
+        }
+
+        return '$..' . $property->property;
+    }
+
+    /**
      * @param Definition $scheme
      * @param JSONPath $jsonPath
      */
@@ -229,7 +242,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
 
         /** @var Property $property */
         foreach ($scheme->properties as $property) {
-            $value = $jsonPath->find('$..' . $property->property);
+            $value = $jsonPath->find($this->getJsonPath($property));
             if (!$value->valid()) {
                 if ($property->required) {
                     throw new RuntimeException(
@@ -245,7 +258,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
 
             if ($property->items) {
                 $scheme = $this->getSchemeByName($property->items);
-                $this->validateScheme($scheme, $jsonPath->find('$..' . $property->property));
+                $this->validateScheme($scheme, $jsonPath->find($this->getJsonPath($property)));
             }
 
             $this->validateProperty($property, current($value->data()));
