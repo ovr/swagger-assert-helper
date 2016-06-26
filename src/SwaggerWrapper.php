@@ -256,12 +256,12 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                 }
             }
 
+            $this->validateProperty($property, current($value->data()));
+            
             if ($property->items) {
                 $scheme = $this->getSchemeByName($property->items);
                 $this->validateScheme($scheme, $jsonPath->find($this->getJsonPath($property)));
             }
-
-            $this->validateProperty($property, current($value->data()));
         }
     }
 
@@ -273,8 +273,20 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
     protected function validateProperty(Property $property, $value)
     {
         switch ($property->type) {
-            case 'string':
             case 'boolean':
+            case 'array':
+                if (gettype($value) != $property->type && $property->required) {
+                    throw new RuntimeException(
+                        sprintf(
+                            'Type of the property %s must be %s instead of %s',
+                            $property->property,
+                            $property->type,
+                            gettype($value)
+                        )
+                    );
+                }
+                break;
+            case 'string':
             case 'integer':
                 if (gettype($value) != $property->type && $property->required) {
                     throw new RuntimeException(
