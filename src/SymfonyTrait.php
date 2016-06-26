@@ -32,18 +32,32 @@ trait SymfonyTrait
         if ($operation->parameters) {
             foreach ($operation->parameters as $parameter) {
                 if (isset($parameters[$parameter->name])) {
+                    $parameterValue = $parameters[$parameter->name];
+                    if ($parameter->enum) {
+                        if (!in_array($parameterValue, $parameter->enum)) {
+                            throw new InvalidArgumentException(
+                                sprintf(
+                                    'Parameter "%s" has enum {"%s"}, but value "%s"',
+                                    $parameter->name,
+                                    implode('"|"', $parameter->enum),
+                                    $parameterValue
+                                )
+                            );
+                        }
+                    }
+
                     switch ($parameter->in) {
                         case 'path':
-                            $path = str_replace('{' . $parameter->name . '}', $parameters[$parameter->name], $path);
+                            $path = str_replace('{' . $parameter->name . '}', $parameterValue, $path);
                             break;
                         case 'header':
-                            $request->headers->set($parameter->name, $parameters[$parameter->name]);
+                            $request->headers->set($parameter->name, $parameterValue);
                             break;
                         case 'query':
-                            $request->query->set($parameter->name, $parameters[$parameter->name]);
+                            $request->query->set($parameter->name, $parameterValue);
                             break;
                         case 'formData':
-                            $request->request->set($parameter->name, $parameters[$parameter->name]);
+                            $request->request->set($parameter->name, $parameterValue);
                             break;
                         default:
                             throw new RuntimeException(
