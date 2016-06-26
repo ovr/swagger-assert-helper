@@ -13,7 +13,7 @@ use Zend\Http\Request;
 trait ZendTrait
 {
     /**
-     * Prepare a Symfony Request by Operation with $parameters
+     * Prepare a Zend Request by Operation with $parameters
      *
      * @param Operation $operation
      * @param array $parameters

@@ -13,7 +13,7 @@ use Swagger\Annotations\Operation;
 trait LaravelTrait
 {
     /**
-     * Prepare a Symfony Request by Operation with $parameters
+     * Prepare a Laravel Request by Operation with $parameters
      *
      * @param Operation $operation
      * @param array $parameters
