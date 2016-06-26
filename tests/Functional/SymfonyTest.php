@@ -28,6 +28,21 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
             ->assertHttpResponseForOperation($response, $operation, Response::HTTP_OK);
     }
 
+    public function testGetUserFriendsById()
+    {
+        $operation = $this->getSwaggerWrapper()->getOperationByName('getUserFriendsById');
+        $response = $this->getApp()->handle(
+            $this->makeRequestByOperation(
+                $operation,
+                [
+                    'id' => 1
+                ]
+            )
+        );
+        $this->getSwaggerWrapper()
+            ->assertHttpResponseForOperation($response, $operation, Response::HTTP_OK);
+    }
+
     /**
      * @return SymfonyApp
      */

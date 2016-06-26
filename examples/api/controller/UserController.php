@@ -120,7 +120,13 @@ class UserController
 
 
     /**
-     * @SWG\Delete(
+     * @SWG\Definition(
+     *  definition = "UserFriendsResponse",
+     *  required={"data"},
+     *  @SWG\Property(property="data", type="array", @SWG\Items(ref="#/definitions/UserResponse"))
+     * )
+     *
+     * @SWG\Get(
      * 		tags={"User"},
      * 		path="/user/{id}/friends",
      * 		operationId="getUserFriendsById",
@@ -149,7 +155,7 @@ class UserController
      * 		@SWG\Response(
      * 			response=200,
      * 			description="success",
-     * 			@SWG\Schema(ref="#/definitions/UserResponse")
+     * 			@SWG\Schema(ref="#/definitions/UserFriendsResponse")
      * 		),
      * 		@SWG\Response(
      * 			response=404,
@@ -161,8 +167,8 @@ class UserController
     {
         $friends = [];
 
-        for ($i = 0; $i < 100; $i++) {
-            $friends = User::generateFake()->toApi();
+        for ($i = 0; $i < 25; $i++) {
+            $friends[] = User::generateFake()->toApi();
         }
 
         return [
