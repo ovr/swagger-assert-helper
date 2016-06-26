@@ -31,7 +31,7 @@ class UserController
      */
     public function getAction()
     {
-
+        return User::generateFake()->toApi();
     }
 
     /**
@@ -53,7 +53,7 @@ class UserController
      */
     public function createAction()
     {
-
+        return true;
     }
 
     /**
@@ -82,7 +82,7 @@ class UserController
      */
     public function updateAction()
     {
-
+        return true;
     }
 
     /**
@@ -111,7 +111,7 @@ class UserController
      */
     public function deleteAction()
     {
-
+        return true;
     }
 
 
@@ -155,6 +155,14 @@ class UserController
      */
     public function friendsAction()
     {
+        $friends = [];
 
+        for ($i = 0; $i < 100; $i++) {
+            $friends = User::generateFake()->toApi();
+        }
+
+        return [
+            'data' => $friends
+        ];
     }
 }
