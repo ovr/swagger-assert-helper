@@ -67,8 +67,7 @@ class SwaggerWrapperTest extends \PHPUnit_Framework_TestCase
         $swaggerWrapper = $this->getSwaggerWrapper();
         $swaggerWrapper->flagPropertyAsRequiredFromDefinition($definition);
     }
-
-
+    
     /**
      * @return \Ovr\Swagger\SwaggerWrapper
      */
