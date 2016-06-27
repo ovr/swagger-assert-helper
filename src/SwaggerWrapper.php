@@ -250,8 +250,8 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
 
             $iterable = $this->validateProperty($property, current($value->data()));
 
-            if ($property->items) {
-                $scheme = $this->getSchemeByName($property->items);
+            if ($property->items && $property->items->ref) {
+                $scheme = $this->getSchemeByName($property->items->ref);
 
                 if ($iterable) {
                     foreach (current($value->data()) as $entity) {
