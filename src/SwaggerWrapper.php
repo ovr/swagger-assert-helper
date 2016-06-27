@@ -102,8 +102,12 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
     public function getSchemeByName($name)
     {
         if ($this->swagger->definitions) {
+            if (strpos($name, '#/definitions/') === 0) {
+                $name = substr($name, 14);
+            }
+
             foreach ($this->swagger->definitions as $definition) {
-                if (strpos($name, $definition->definition) !== false) {
+                if ($definition->definition == $name) {
                     return $definition;
                 }
             }
