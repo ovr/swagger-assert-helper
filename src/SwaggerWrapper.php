@@ -97,7 +97,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
 
     /**
      * @param string $name
-     * @return null|Definition
+     * @return Definition|null
      */
     public function getSchemeByName($name)
     {
@@ -186,6 +186,14 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
 
             if ($response->schema->ref) {
                 $scheme = $this->getSchemeByName($response->schema->ref);
+                parent::assertInstanceOf(
+                    Definition::class,
+                    $scheme,
+                    sprintf(
+                        'Definition "%s" not found in Swagger Scheme',
+                        $response->schema->ref
+                    )
+                );
             }
 
             $jsonPath = (new JSONPath(json_decode($httpResponse->getContent())));
@@ -252,6 +260,14 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
 
             if ($property->items && $property->items->ref) {
                 $scheme = $this->getSchemeByName($property->items->ref);
+                parent::assertInstanceOf(
+                    Definition::class,
+                    $scheme,
+                    sprintf(
+                        'Definition "%s" not found in Swagger Scheme',
+                        $property->items->ref
+                    )
+                );
 
                 if ($iterable) {
                     foreach (current($value->data()) as $entity) {
