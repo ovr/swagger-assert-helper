@@ -20,7 +20,7 @@ matrix:
 
 install:
   - composer self-update --quiet
-  - COMPOSER_DISCARD_CHANGES=true composer --prefer-source update --no-interaction --no-progress -o
+  - composer --prefer-source update --no-interaction --no-progress -o
 
 script:
   - ./vendor/bin/phpunit -v --debug --coverage-clover=coverage.clover
