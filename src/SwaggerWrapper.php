@@ -35,6 +35,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
         'post',
         'put',
         'delete',
+        'options',
         'head',
         'patch'
     ];
