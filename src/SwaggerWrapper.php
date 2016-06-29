@@ -314,6 +314,19 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                         }
                     }
 
+                    if ($property->maxItems) {
+                        if ($property->maxItems < count($value)) {
+                            throw new RuntimeException(
+                                sprintf(
+                                    'Defined maxItems of the property %s must be %s instead of %s actual',
+                                    $property->property,
+                                    $property->maxItems,
+                                    count($value)
+                                )
+                            );
+                        }
+                    }
+
                     return (bool) count($value);
                 }
                 break;
