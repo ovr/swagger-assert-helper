@@ -302,7 +302,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                     }
 
                     if ($property->minItems) {
-                        if ($property->minItems < count($value)) {
+                        if ($property->minItems > count($value)) {
                             throw new RuntimeException(
                                 sprintf(
                                     'Defined minItems of the property %s must be %s instead of %s actual',
