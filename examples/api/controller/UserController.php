@@ -123,7 +123,13 @@ class UserController
      * @SWG\Definition(
      *  definition = "UserFriendsResponse",
      *  required={"data"},
-     *  @SWG\Property(property="data", type="array", @SWG\Items(ref="#/definitions/UserResponse"))
+     *  @SWG\Property(
+     *     property="data",
+     *     type="array",
+     *     @SWG\Items(ref="#/definitions/UserResponse"),
+     *     maxItems=100,
+     *     minItems=1
+     *  )
      * )
      *
      * @SWG\Get(
