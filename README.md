@@ -19,15 +19,13 @@ class RequestTest {
     public function testGetUserById()
     {
         $operation = $this->getSwaggerWrapper()->getOperationByName('getUserById');
-        $response = $this->getApp()->handle(
-            $this->makeRequestByOperation(
-                $operation,
-                [
-                    'id' => 1
-                ]
-            )
+        $request = $this->makeRequestByOperation(
+            $operation,
+            [
+                'id' => 1
+            ]
         );
-        var_dump($response); // This will be \Symfony\Component\HttpFoundation\Request
+        var_dump($request); // This will be \Symfony\Component\HttpFoundation\Request
     }
 }
 ```
