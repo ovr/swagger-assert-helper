@@ -11,7 +11,7 @@ This library bring support for:
 
 ### Making HTTP Request
 
-```
+```php
 class RequestTest {
     // You should use trait for your framework, review supported and use what you need
     use \Ovr\Swagger\SymfonyTrait;
