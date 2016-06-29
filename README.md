@@ -9,7 +9,28 @@ This library bring support for:
 
 # How to use?
 
-1. First you needed
+### Making HTTP Request
+
+```
+class RequestTest {
+    // You should use trait for your framework, review supported and use what you need
+    use \Ovr\Swagger\SymfonyTrait;
+    
+    public function testGetUserById()
+    {
+        $operation = $this->getSwaggerWrapper()->getOperationByName('getUserById');
+        $response = $this->getApp()->handle(
+            $this->makeRequestByOperation(
+                $operation,
+                [
+                    'id' => 1
+                ]
+            )
+        );
+        var_dump($response); // This will be \Symfony\Component\HttpFoundation\Request
+    }
+}
+```
 
 # LICENSE
 
