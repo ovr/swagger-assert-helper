@@ -305,7 +305,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                         if ($property->minItems > count($value)) {
                             throw new RuntimeException(
                                 sprintf(
-                                    'Defined minItems of the property %s must be %s instead of %s actual',
+                                    'Defined minItems of the property "%s", expected: %s, actual: %s',
                                     $property->property,
                                     $property->minItems,
                                     count($value)
@@ -318,7 +318,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                         if ($property->maxItems < count($value)) {
                             throw new RuntimeException(
                                 sprintf(
-                                    'Defined maxItems of the property %s must be %s instead of %s actual',
+                                    'Defined maxItems of the property "%s", expected: %s, actual: %s',
                                     $property->property,
                                     $property->maxItems,
                                     count($value)
