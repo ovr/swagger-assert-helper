@@ -52,6 +52,13 @@ abstract class AbstractTraitTestCase extends \PHPUnit_Framework_TestCase
                 [
                     'id' => 1
                 ]
+            ],
+            [
+                'getUserFriendsById',
+                '/v1/user/1/friends',
+                [
+                    'id' => 1
+                ]
             ]
         ];
     }
