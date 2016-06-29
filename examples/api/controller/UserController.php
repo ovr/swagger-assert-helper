@@ -7,7 +7,7 @@ namespace Api\Controller;
 
 use Api\Model\User;
 
-class UserController
+class UserController extends AbstractController
 {
     /**
      * @SWG\Get(

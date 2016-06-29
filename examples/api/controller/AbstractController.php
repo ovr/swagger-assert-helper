@@ -17,7 +17,7 @@ namespace Api\Controller;
  * 		)
  * )
  */
-class UserController
+class AbstractController
 {
 
 }
