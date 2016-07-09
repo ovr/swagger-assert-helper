@@ -17,12 +17,12 @@ trait SlimTrait
      *
      * @param Operation $operation
      * @param array $parameters
-     * @param bool $skipRequired
+     * @param int $options BitMask of options to skip or something else
      * @return Request
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      */
-    public function makeRequestByOperation(Operation $operation, array $parameters = [], $skipRequired = false)
+    public function makeRequestByOperation(Operation $operation, array $parameters = [], $options = 0)
     {
         $headers = new \Slim\Http\Headers();
         $body = new \Slim\Http\RequestBody();
@@ -48,7 +48,7 @@ trait SlimTrait
                                 )
                             );
                     }
-                } elseif ($parameter->required && !$skipRequired) {
+                } elseif ($parameter->required && !($options & SwaggerWrapper::SKIP_REQUIRED)) {
                     throw new InvalidArgumentException(
                         sprintf(
                             'Parameter "%s" is required, please pass value for this in $parameters',
