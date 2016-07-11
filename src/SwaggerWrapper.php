@@ -9,6 +9,7 @@ use Flow\JSONPath\JSONPath;
 use RuntimeException;
 use Swagger\Annotations\Definition;
 use Swagger\Annotations\Operation;
+use Swagger\Annotations\Parameter;
 use Swagger\Annotations\Property;
 use Swagger\Annotations\Response as SwaggerResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -67,6 +68,27 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
     protected function prepareOperation(Operation $operation)
     {
         $operation->path = $this->swagger->basePath . $operation->path;
+
+        /**
+         * I don't known How will be better
+         * But I am going to add a new required Parameter to check this in Request Scheme
+         */
+        if ($operation->security) {
+            if ($this->swagger->securityDefinitions) {
+                foreach ($this->swagger->securityDefinitions as $definition) {
+                    if ($operation->security == $definition->securityDefinition) {
+                        $operation->parameters[] = new Parameter(
+                            [
+                                'name' => $definition->name,
+                                'in' => $definition->in,
+                                'description' => $definition->description,
+                                'required' => true
+                            ]
+                        );
+                    }
+                }
+            }
+        }
 
         return $operation;
     }
