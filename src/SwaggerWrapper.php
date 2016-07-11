@@ -61,6 +61,17 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
     }
 
     /**
+     * @param Operation $operation
+     * @return Operation
+     */
+    protected function prepareOperation(Operation $operation)
+    {
+        $operation->path = $this->swagger->basePath . $operation->path;
+
+        return $operation;
+    }
+
+    /**
      * @param string $operationId
      * @param string|null $method Will be removed in feature
      * @return null|Operation
@@ -73,9 +84,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                 /** @var Operation|null $operation */
                 $operation = $path->{$method};
                 if ($operation && $operation->operationId == $operationId) {
-                    $operation->path = $this->swagger->basePath . $operation->path;
-
-                    return $operation;
+                    return $this->prepareOperation($operation);
                 }
             }
         } else {
@@ -85,9 +94,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                     /** @var Operation|null $operation */
                     $operation = $path->{$possiblePathMethod};
                     if ($operation && $operation->operationId == $operationId) {
-                        $operation->path = $this->swagger->basePath . $operation->path;
-
-                        return $operation;
+                        return $this->prepareOperation($operation);
                     }
                 }
             }
