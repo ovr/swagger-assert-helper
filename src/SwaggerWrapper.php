@@ -67,6 +67,14 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
      */
     protected function prepareOperation(Operation $operation)
     {
+        /**
+         * @todo Prepare operations on SwaggerWrapper __construct?
+         *
+         * Object is passed by referenced variable
+         * and after 2 operations get, operation will be broken
+         * think a little bit about this moment
+         */
+        $operation = clone $operation;
         $operation->path = $this->swagger->basePath . $operation->path;
 
         /**
