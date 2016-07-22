@@ -324,6 +324,15 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
      */
     protected function validateProperty(Property $property, $value)
     {
+        if ($property->required && $value === null) {
+            throw new RuntimeException(
+                sprintf(
+                    'Property %s is required and cannot be null',
+                    $property->property
+                )
+            );
+        }
+
         switch ($property->type) {
             case 'array':
                 if ($property->required) {
@@ -370,7 +379,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
             case 'boolean':
             case 'string':
             case 'integer':
-                if (gettype($value) != $property->type && $property->required) {
+                if ($value !== null && gettype($value) != $property->type) {
                     throw new RuntimeException(
                         sprintf(
                             'Type of the property %s must be %s instead of %s',
@@ -379,7 +388,9 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                             gettype($value)
                         )
                     );
-                } elseif (!$this->checkFormat($property, $value)) {
+                }
+
+                if ($value !== null && !$this->checkFormat($property, $value)) {
                     throw new RuntimeException(
                         sprintf(
                             'Format of the "%s" property (value "%s") is not valid, need "%s" format',
@@ -391,7 +402,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                 }
                 break;
             case 'number':
-                if (gettype($value) != 'double' && $property->required) {
+                if ($value !== null && gettype($value) != 'double') {
                     throw new RuntimeException(
                         sprintf(
                             'Type of the property %s must be %s instead of %s',
@@ -408,7 +419,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
 
     /**
      * @param Property $property
-     * @param $value
+     * @param mixed $value
      * @return bool
      */
     protected function checkFormat(Property $property, $value)
