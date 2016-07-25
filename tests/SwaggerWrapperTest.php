@@ -69,11 +69,11 @@ class SwaggerWrapperTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * @return \Ovr\Swagger\SwaggerWrapper
+     * @return SwaggerWrapperMock
      */
     protected function getSwaggerWrapper()
     {
-        return new \Ovr\Swagger\SwaggerWrapper(
+        return new SwaggerWrapperMock(
             \Swagger\scan(
                 __DIR__ . '/../examples'
             )
@@ -96,5 +96,28 @@ class SwaggerWrapperTest extends \PHPUnit_Framework_TestCase
         $property->type = $type;
 
         return $property;
+    }
+
+    public function testIntPropertyMinimumSuccess()
+    {
+        $property = $this->getMockProperty('test', 'integer');
+        $property->minimum = 0;
+
+        $swaggerWrapper = $this->getSwaggerWrapper();
+        $swaggerWrapper->validateProperty($property, 1);
+        $swaggerWrapper->validateProperty($property, 0);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Property "test" (value "24") less then 25 (property minimum)
+     */
+    public function testIntPropertyMinimumFail()
+    {
+        $property = $this->getMockProperty('test', 'integer');
+        $property->minimum = 25;
+
+        $swaggerWrapper = $this->getSwaggerWrapper();
+        $swaggerWrapper->validateProperty($property, 24);
     }
 }
