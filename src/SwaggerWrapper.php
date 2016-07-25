@@ -390,15 +390,31 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                     );
                 }
 
-                if ($value !== null && !$this->checkFormat($property, $value)) {
-                    throw new RuntimeException(
-                        sprintf(
-                            'Format of the "%s" property (value "%s") is not valid, need "%s" format',
-                            $property->property,
-                            $value,
-                            $property->format
-                        )
-                    );
+
+                if ($value !== null) {
+                    if (!$this->checkFormat($property, $value)) {
+                        throw new RuntimeException(
+                            sprintf(
+                                'Format of the "%s" property (value "%s") is not valid, need "%s" format',
+                                $property->property,
+                                $value,
+                                $property->format
+                            )
+                        );
+                    }
+
+                    if ($property->type == 'integer') {
+                        if ($property->minimum && $value < $property->minimum) {
+                            throw new RuntimeException(
+                                sprintf(
+                                    'Property "%s" (value "%s") less then %s (property minimum)',
+                                    $property->property,
+                                    $value,
+                                    $property->minimum
+                                )
+                            );
+                        }
+                    }
                 }
                 break;
             case 'number':
