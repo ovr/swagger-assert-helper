@@ -404,15 +404,26 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                     }
 
                     if ($property->type == 'integer') {
-                        if ($property->minimum && $value < $property->minimum) {
-                            throw new RuntimeException(
-                                sprintf(
-                                    'Property "%s" (value "%s") less then %s (property minimum)',
-                                    $property->property,
-                                    $value,
-                                    $property->minimum
-                                )
-                            );
+                        if ($property->minimum) {
+                            if ($property->exclusiveMinimum && $value < $property->minimum) {
+                                throw new RuntimeException(
+                                    sprintf(
+                                        'Property "%s" (value "%s") < %s (exclusive minimum)',
+                                        $property->property,
+                                        $value,
+                                        $property->minimum
+                                    )
+                                );
+                            } elseif ($value <= $property->minimum) {
+                                throw new RuntimeException(
+                                    sprintf(
+                                        'Property "%s" (value "%s") <= %s (minimum)',
+                                        $property->property,
+                                        $value,
+                                        $property->minimum
+                                    )
+                                );
+                            }
                         }
                     }
                 }

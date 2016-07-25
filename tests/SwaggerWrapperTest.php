@@ -98,24 +98,63 @@ class SwaggerWrapperTest extends \PHPUnit_Framework_TestCase
         return $property;
     }
 
-    public function testIntPropertyMinimumSuccess()
+    public function testIntPropertyInclusiveMinimumSuccess()
     {
         $property = $this->getMockProperty('test', 'integer');
         $property->minimum = 0;
 
         $swaggerWrapper = $this->getSwaggerWrapper();
         $swaggerWrapper->validateProperty($property, 1);
+        $swaggerWrapper->validateProperty($property, 25);
+    }
+
+    public function testIntPropertyExclusiveMinimumSuccess()
+    {
+        $property = $this->getMockProperty('test', 'integer');
+        $property->minimum = 0;
+        $property->exclusiveMinimum = true;
+
+        $swaggerWrapper = $this->getSwaggerWrapper();
         $swaggerWrapper->validateProperty($property, 0);
+        $swaggerWrapper->validateProperty($property, 1);
+        $swaggerWrapper->validateProperty($property, 25);
     }
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Property "test" (value "24") less then 25 (property minimum)
+     * @expectedExceptionMessage Property "test" (value "24") <= 25 (minimum)
      */
-    public function testIntPropertyMinimumFail()
+    public function testIntPropertyInclusiveMinimumLessFail()
     {
         $property = $this->getMockProperty('test', 'integer');
         $property->minimum = 25;
+
+        $swaggerWrapper = $this->getSwaggerWrapper();
+        $swaggerWrapper->validateProperty($property, 24);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Property "test" (value "25") <= 25 (minimum)
+     */
+    public function testIntPropertyInclusiveMinimumEqualsFail()
+    {
+        $property = $this->getMockProperty('test', 'integer');
+        $property->minimum = 25;
+
+        $swaggerWrapper = $this->getSwaggerWrapper();
+        $swaggerWrapper->validateProperty($property, 25);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Property "test" (value "24") < 25 (exclusive minimum)
+     */
+    public function testIntPropertyExclusiveMinimumEqualsFail()
+    {
+        $property = $this->getMockProperty('test', 'integer');
+        $property->minimum = 25;
+        $property->exclusiveMinimum = true;
 
         $swaggerWrapper = $this->getSwaggerWrapper();
         $swaggerWrapper->validateProperty($property, 24);
