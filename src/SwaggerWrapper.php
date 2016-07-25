@@ -425,6 +425,28 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                                 );
                             }
                         }
+
+                        if ($property->maximum) {
+                            if ($property->exclusiveMaximum && $value > $property->maximum) {
+                                throw new RuntimeException(
+                                    sprintf(
+                                        'Property "%s" (value "%s") > %s (exclusive maximum)',
+                                        $property->property,
+                                        $value,
+                                        $property->minimum
+                                    )
+                                );
+                            } elseif ($value >= $property->maximum) {
+                                throw new RuntimeException(
+                                    sprintf(
+                                        'Property "%s" (value "%s") >= %s (maximum)',
+                                        $property->property,
+                                        $value,
+                                        $property->minimum
+                                    )
+                                );
+                            }
+                        }
                     }
                 }
                 break;
