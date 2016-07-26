@@ -433,7 +433,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                                         'Property "%s" (value "%s") > %s (exclusive maximum)',
                                         $property->property,
                                         $value,
-                                        $property->minimum
+                                        $property->maximum
                                     )
                                 );
                             } elseif ($value >= $property->maximum) {
@@ -442,7 +442,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                                         'Property "%s" (value "%s") >= %s (maximum)',
                                         $property->property,
                                         $value,
-                                        $property->minimum
+                                        $property->maximum
                                     )
                                 );
                             }
