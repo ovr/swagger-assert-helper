@@ -79,6 +79,7 @@ trait SymfonyTrait
             }
         }
 
+        $request->server->set('REMOTE_ADDR', '8.8.8.8');
         $request->server->set('REQUEST_URI', $path);
         $request->server->set('REQUEST_METHOD', $operation->method);
 
