@@ -44,6 +44,12 @@ class UserController extends AbstractController
      * 		path="/user",
      * 		operationId="createUser",
      * 		summary="Find user by $id",
+     * 		@SWG\Parameter(
+     * 			name="username",
+     * 			in="formData",
+     * 			required=true,
+     * 			type="string"
+     * 		),
      * 		@SWG\Response(
      * 			response=200,
      * 			description="success",
@@ -52,12 +58,13 @@ class UserController extends AbstractController
      * 		@SWG\Response(
      * 			response=404,
      * 			description="Not found"
-     * 		)
+     * 		),
+     *      security={{"jwt":{}}},
      * )
      */
     public function createAction()
     {
-        return true;
+        return User::generateFake()->toApi();
     }
 
     /**
@@ -81,7 +88,8 @@ class UserController extends AbstractController
      * 		@SWG\Response(
      * 			response=404,
      * 			description="Not found"
-     * 		)
+     * 		),
+     *      security={{"jwt":{}}},
      * )
      */
     public function updateAction()
@@ -110,7 +118,8 @@ class UserController extends AbstractController
      * 		@SWG\Response(
      * 			response=404,
      * 			description="Not found"
-     * 		)
+     * 		),
+     *      security={{"jwt":{}}},
      * )
      */
     public function deleteAction()

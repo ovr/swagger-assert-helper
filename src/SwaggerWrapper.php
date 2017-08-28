@@ -82,19 +82,30 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
          * But I am going to add a new required Parameter to check this in Request Scheme
          */
         if ($operation->security) {
-            if ($this->swagger->securityDefinitions) {
-                foreach ($this->swagger->securityDefinitions as $definition) {
-                    if ($operation->security == $definition->securityDefinition) {
-                        $operation->parameters[] = new Parameter(
-                            [
-                                'name' => $definition->name,
-                                'in' => $definition->in,
-                                'description' => $definition->description,
-                                'required' => true
-                            ]
-                        );
-                    }
-                }
+            foreach ($operation->security as $security) {
+                parent::assertInternalType(
+                    'array',
+                    $security,
+                    'Operation->security must be array of objects'
+                );
+
+                $name = key($security);
+
+                $securityDefinition = $this->getSecurityByName($name);
+                parent::assertInternalType(
+                    'object',
+                    $securityDefinition,
+                    "Unknown security definition {$name}"
+                );
+
+                $operation->parameters[] = new Parameter(
+                    [
+                        'name' => $securityDefinition->name,
+                        'in' => $securityDefinition->in,
+                        'description' => $securityDefinition->description,
+                        'required' => true
+                    ]
+                );
             }
         }
 

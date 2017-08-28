@@ -29,7 +29,8 @@ abstract class AbstractTraitTestCase extends \PHPUnit_Framework_TestCase
                 'createUser',
                 '/v1/user',
                 [
-                    'id' => 1
+                    'username' => 'ovr',
+                    'X-AUTH-TOKEN' => 'MEOW'
                 ]
             ],
             [
@@ -43,14 +44,16 @@ abstract class AbstractTraitTestCase extends \PHPUnit_Framework_TestCase
                 'updateUserById',
                 '/v1/user/1',
                 [
-                    'id' => 1
+                    'id' => 1,
+                    'X-AUTH-TOKEN' => 'MEOW'
                 ]
             ],
             [
                 'deleteUserById',
                 '/v1/user/1',
                 [
-                    'id' => 1
+                    'id' => 1,
+                    'X-AUTH-TOKEN' => 'MEOW'
                 ]
             ],
             [

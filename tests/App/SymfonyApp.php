@@ -22,6 +22,9 @@ class SymfonyApp
             case '/v1/user/1':
                 $result = $controller->getAction();
                 break;
+            case '/v1/user':
+                $result = $controller->createAction();
+                break;
             case '/v1/user/1/friends':
                 $result = $controller->getFriendsAction();
                 break;

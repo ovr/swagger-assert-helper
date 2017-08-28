@@ -28,6 +28,22 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase
             ->assertHttpResponseForOperation($response, $operation, Response::HTTP_OK);
     }
 
+    public function testCreateUser()
+    {
+        $operation = $this->getSwaggerWrapper()->getOperationByName('createUser');
+        $response = $this->getApp()->handle(
+            $this->makeRequestByOperation(
+                $operation,
+                [
+                    'username' => 'ovr',
+                    'X-AUTH-TOKEN' => 'MEOW'
+                ]
+            )
+        );
+        $this->getSwaggerWrapper()
+            ->assertHttpResponseForOperation($response, $operation, Response::HTTP_OK);
+    }
+
     public function testGetUserFriendsById()
     {
         $operation = $this->getSwaggerWrapper()->getOperationByName('getUserFriendsById');
