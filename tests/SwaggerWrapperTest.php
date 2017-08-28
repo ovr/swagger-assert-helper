@@ -7,6 +7,24 @@ namespace Tests;
 
 class SwaggerWrapperTest extends \PHPUnit_Framework_TestCase
 {
+    public function testGetSecurityByNameSuccess()
+    {
+        $expectedSecurityName = 'jwt';
+        $swaggerWrapper = $this->getSwaggerWrapper();
+
+        $security = $swaggerWrapper->getSecurityByName($expectedSecurityName);
+
+        parent::assertSame(\Swagger\Annotations\SecurityScheme::class, get_class($security));
+        parent::assertSame($expectedSecurityName, $security->securityDefinition);
+    }
+
+    public function testGetSecurityByNameFail()
+    {
+        $securityName = 'unknown-1232131231231231231';
+
+        parent::assertSame(null, $this->getSwaggerWrapper()->getSecurityByName($securityName));
+    }
+
     public function testFlagPropertyAsRequiredFromDefinitionSuccess()
     {
         /** @var \Swagger\Annotations\Definition $definition */

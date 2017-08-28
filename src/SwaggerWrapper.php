@@ -155,6 +155,23 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
     }
 
     /**
+     * @param $name
+     * @return \Swagger\Annotations\SecurityScheme|null
+     */
+    public function getSecurityByName($name)
+    {
+        if ($this->swagger->securityDefinitions) {
+            foreach ($this->swagger->securityDefinitions as $definition) {
+                if ($definition->securityDefinition === $name) {
+                    return $definition;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param Operation $path
      * @param int $statusCode
      * @return null|SwaggerResponse
