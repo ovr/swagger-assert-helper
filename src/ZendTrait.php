@@ -32,6 +32,9 @@ trait ZendTrait
             foreach ($operation->parameters as $parameter) {
                 if (isset($parameters[$parameter->name])) {
                     switch ($parameter->in) {
+                        case 'header':
+                            $request->getHeaders()->addHeaderLine($parameter->name, $parameters[$parameter->name]);
+                            break;
                         case 'path':
                             $path = str_replace('{' . $parameter->name . '}', $parameters[$parameter->name], $path);
                             break;
