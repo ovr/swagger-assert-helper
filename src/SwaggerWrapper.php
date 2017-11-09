@@ -352,7 +352,10 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
      */
     protected function validateProperty(Property $property, $value)
     {
-        if ($property->required && $value === null) {
+        // Supported inside Swagger 3+ for Property, now will be null as default
+        $nullable = true;
+
+        if ($nullable === false && $value === null) {
             throw new RuntimeException(
                 sprintf(
                     'Property %s is required and cannot be null',
@@ -365,14 +368,27 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
             case 'array':
                 if ($property->required) {
                     if (gettype($value) != $property->type) {
-                        throw new RuntimeException(
-                            sprintf(
-                                'Type of the property %s must be %s instead of %s actual',
-                                $property->property,
-                                $property->type,
-                                gettype($value)
-                            )
-                        );
+                        if ($nullable) {
+                            if ($value !== null) {
+                                throw new RuntimeException(
+                                    sprintf(
+                                        'Type of the property %s must be %s|null (because nullable) instead of %s actual',
+                                        $property->property,
+                                        $property->type,
+                                        gettype($value)
+                                    )
+                                );
+                            }
+                        } else {
+                            throw new RuntimeException(
+                                sprintf(
+                                    'Type of the property %s must be %s instead of %s actual',
+                                    $property->property,
+                                    $property->type,
+                                    gettype($value)
+                                )
+                            );
+                        }
                     }
 
                     if ($property->minItems) {
@@ -407,17 +423,29 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
             case 'boolean':
             case 'string':
             case 'integer':
-                if ($value !== null && gettype($value) != $property->type) {
-                    throw new RuntimeException(
-                        sprintf(
-                            'Type of the property %s must be %s instead of %s',
-                            $property->property,
-                            $property->type,
-                            gettype($value)
-                        )
-                    );
+                if (gettype($value) != $property->type) {
+                    if ($nullable) {
+                        if ($value !== null) {
+                            throw new RuntimeException(
+                                sprintf(
+                                    'Type of the property %s must be %s|null (because nullable) instead of %s',
+                                    $property->property,
+                                    $property->type,
+                                    gettype($value)
+                                )
+                            );
+                        }
+                    } else {
+                        throw new RuntimeException(
+                            sprintf(
+                                'Type of the property %s must be %s instead of %s',
+                                $property->property,
+                                $property->type,
+                                gettype($value)
+                            )
+                        );
+                    }
                 }
-
 
                 if ($value !== null) {
                     if (!$this->checkFormat($property, $value)) {
@@ -479,15 +507,28 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                 }
                 break;
             case 'number':
-                if ($value !== null && gettype($value) != 'double') {
-                    throw new RuntimeException(
-                        sprintf(
-                            'Type of the property %s must be %s instead of %s',
-                            $property->property,
-                            $property->type,
-                            gettype($value)
-                        )
-                    );
+                if (gettype($value) != 'double') {
+                    if ($nullable) {
+                        if ($value !== null) {
+                            throw new RuntimeException(
+                                sprintf(
+                                    'Type of the property %s must be %s|null (because nullable) instead of %s',
+                                    $property->property,
+                                    $property->type,
+                                    gettype($value)
+                                )
+                            );
+                        }
+                    } else {
+                        throw new RuntimeException(
+                            sprintf(
+                                'Type of the property %s must be %s instead of %s',
+                                $property->property,
+                                $property->type,
+                                gettype($value)
+                            )
+                        );
+                    }
                 }
         }
 
