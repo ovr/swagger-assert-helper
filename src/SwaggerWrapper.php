@@ -14,7 +14,7 @@ use Swagger\Annotations\Property;
 use Swagger\Annotations\Response as SwaggerResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class SwaggerWrapper extends \PHPUnit_Framework_Assert
+class SwaggerWrapper extends \PHPUnit\Framework\Assert
 {
     /**
      * Skip Required check on Property
