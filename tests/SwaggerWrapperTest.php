@@ -5,7 +5,7 @@
 
 namespace Tests;
 
-class SwaggerWrapperTest extends \PHPUnit_Framework_TestCase
+class SwaggerWrapperTest extends \PHPUnit\Framework\TestCase
 {
     public function testGetSecurityByNameSuccess()
     {

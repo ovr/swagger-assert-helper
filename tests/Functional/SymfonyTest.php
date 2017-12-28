@@ -9,7 +9,7 @@ use Ovr\Swagger\SymfonyTrait;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\App\SymfonyApp;
 
-class SymfonyTest extends \PHPUnit_Framework_TestCase
+class SymfonyTest extends \PHPUnit\Framework\TestCase
 {
     use SymfonyTrait;
 
