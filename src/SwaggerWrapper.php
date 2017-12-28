@@ -417,7 +417,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                         }
                     }
 
-                    return is_array($value) && ((bool) count($value));
+                    return is_array($value) && count($value);
                 }
                 break;
             case 'boolean':
