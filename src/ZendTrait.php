@@ -62,6 +62,13 @@ trait ZendTrait
                     );
                 }
             }
+        } elseif ($parameters) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Operation does not have parameters, but you pass %d parameter(s)',
+                    count($parameters)
+                )
+            );
         }
 
         $request->setUri($path);
