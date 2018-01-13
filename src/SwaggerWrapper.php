@@ -306,6 +306,11 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
     {
         $this->flagPropertyAsRequiredFromDefinition($scheme);
 
+        if (!$scheme->properties) {
+            // Schema dont have any properties, lets skip checks for it
+            return false;
+        }
+
         /** @var Property $property */
         foreach ($scheme->properties as $property) {
             $value = $jsonPath->find('$.' . $property->property);
