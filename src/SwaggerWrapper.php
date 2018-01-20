@@ -466,46 +466,54 @@ class SwaggerWrapper extends \PHPUnit\Framework\Assert
 
                     if ($property->type == 'integer') {
                         if ($property->minimum) {
-                            if ($property->exclusiveMinimum && $value < $property->minimum) {
-                                throw new RuntimeException(
-                                    sprintf(
-                                        'Property "%s" (value "%s") < %s (exclusive minimum)',
-                                        $property->property,
-                                        $value,
-                                        $property->minimum
-                                    )
-                                );
-                            } elseif ($value <= $property->minimum) {
-                                throw new RuntimeException(
-                                    sprintf(
-                                        'Property "%s" (value "%s") <= %s (minimum)',
-                                        $property->property,
-                                        $value,
-                                        $property->minimum
-                                    )
-                                );
+                            if ($property->exclusiveMinimum) {
+                                if ($value < $property->minimum) {
+                                    throw new RuntimeException(
+                                        sprintf(
+                                            'Property "%s" (value "%s") < %s (exclusive minimum)',
+                                            $property->property,
+                                            $value,
+                                            $property->minimum
+                                        )
+                                    );
+                                }
+                            } else {
+                                if ($value <= $property->minimum) {
+                                    throw new RuntimeException(
+                                        sprintf(
+                                            'Property "%s" (value "%s") <= %s (minimum)',
+                                            $property->property,
+                                            $value,
+                                            $property->minimum
+                                        )
+                                    );
+                                }
                             }
                         }
 
                         if ($property->maximum) {
-                            if ($property->exclusiveMaximum && $value > $property->maximum) {
-                                throw new RuntimeException(
-                                    sprintf(
-                                        'Property "%s" (value "%s") > %s (exclusive maximum)',
-                                        $property->property,
-                                        $value,
-                                        $property->maximum
-                                    )
-                                );
-                            } elseif ($value >= $property->maximum) {
-                                throw new RuntimeException(
-                                    sprintf(
-                                        'Property "%s" (value "%s") >= %s (maximum)',
-                                        $property->property,
-                                        $value,
-                                        $property->maximum
-                                    )
-                                );
+                            if ($property->exclusiveMaximum) {
+                                if ($value > $property->maximum) {
+                                    throw new RuntimeException(
+                                        sprintf(
+                                            'Property "%s" (value "%s") > %s (exclusive maximum)',
+                                            $property->property,
+                                            $value,
+                                            $property->maximum
+                                        )
+                                    );
+                                }
+                            } else {
+                                if ($value >= $property->maximum) {
+                                    throw new RuntimeException(
+                                        sprintf(
+                                            'Property "%s" (value "%s") >= %s (maximum)',
+                                            $property->property,
+                                            $value,
+                                            $property->maximum
+                                        )
+                                    );
+                                }
                             }
                         }
                     }
