@@ -60,7 +60,7 @@ class SwaggerWrapperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException \PHPUnit_Framework_ExpectationFailedException
+     * @expectedException \PHPUnit\Framework\ExpectationFailedException
      * @expectedExceptionMessage Cannot find property with name property_wrong_name to mark it as required, on scheme TestScheme
      */
     public function testFlagPropertyAsRequiredFromDefinitionFail()
