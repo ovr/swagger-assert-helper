@@ -126,6 +126,16 @@ class SwaggerWrapperTest extends \PHPUnit\Framework\TestCase
         $swaggerWrapper->validateProperty($property, 25);
     }
 
+    public function testIntPropertyInclusiveMaximumSuccess()
+    {
+        $property = $this->getMockProperty('test', 'integer');
+        $property->maximum = 26;
+
+        $swaggerWrapper = $this->getSwaggerWrapper();
+        $swaggerWrapper->validateProperty($property, 1);
+        $swaggerWrapper->validateProperty($property, 25);
+    }
+
     public function testIntPropertyExclusiveMinimumSuccess()
     {
         $property = $this->getMockProperty('test', 'integer');
@@ -134,6 +144,17 @@ class SwaggerWrapperTest extends \PHPUnit\Framework\TestCase
 
         $swaggerWrapper = $this->getSwaggerWrapper();
         $swaggerWrapper->validateProperty($property, 0);
+        $swaggerWrapper->validateProperty($property, 1);
+        $swaggerWrapper->validateProperty($property, 25);
+    }
+
+    public function testIntPropertyExclusiveMaximumSuccess()
+    {
+        $property = $this->getMockProperty('test', 'integer');
+        $property->maximum = 25;
+        $property->exclusiveMaximum = true;
+
+        $swaggerWrapper = $this->getSwaggerWrapper();
         $swaggerWrapper->validateProperty($property, 1);
         $swaggerWrapper->validateProperty($property, 25);
     }
