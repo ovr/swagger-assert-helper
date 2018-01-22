@@ -6,6 +6,7 @@
 namespace Ovr\Swagger;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use InvalidArgumentException;
 use RuntimeException;
 use Swagger\Annotations\Operation;
@@ -75,5 +76,23 @@ trait LaravelTrait
         $request->server->set('REQUEST_METHOD', $operation->method);
 
         return $request;
+    }
+    
+    /**
+     * @param Response $response
+     * @return ResponseData
+     */
+    protected function extractResponseData(Response $response)
+    {
+        $contentType = $response->headers->get('content-type');
+        switch ($contentType) {
+            case 'application/json':
+                return new ResponseData(
+                    $response->getContent(),
+                    $response->getStatusCode()
+                );
+            default:
+                throw new RuntimeException("HTTP content-type: {$contentType} does not supported");
+        }
     }
 }
