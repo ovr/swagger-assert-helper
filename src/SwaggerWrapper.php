@@ -210,25 +210,10 @@ class SwaggerWrapper extends \PHPUnit\Framework\Assert
     {
         $response = $this->findResponseByStatusCode($path, $statusCode);
         if ($response) {
-            parent::assertEquals(
-                $statusCode,
-                $httpResponse->getStatusCode(),
-                'HTTP Response Code must equals with ' . $statusCode
+            return $this->assertHttpResponseForOperationResponse(
+                $httpResponse,
+                $response
             );
-
-            if ($response->schema) {
-                /** @var Definition|null $scheme */
-                $scheme = null;
-
-                if ($response->schema->ref) {
-                    $scheme = $this->getSchemeByName($response->schema->ref);
-                }
-
-                $jsonPath = (new JSONPath(json_decode($httpResponse->getContent())));
-                $this->validateScheme($scheme, $jsonPath);
-            }
-
-            return;
         }
 
         throw new RuntimeException('Cannot find Response in Operation for ' . $statusCode . ' status code');
