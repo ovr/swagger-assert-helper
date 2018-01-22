@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use RuntimeException;
 use Swagger\Annotations\Operation;
 use Zend\Http\Request;
+use Zend\Http\Response;
 
 trait ZendTrait
 {
@@ -75,5 +76,28 @@ trait ZendTrait
         $request->setMethod($operation->method);
 
         return $request;
+    }
+
+    /**
+     * @param Response $response
+     * @return ResponseData
+     */
+    protected function extractResponseData(Response $response)
+    {
+        $header = $response->getHeaders()->get('content-type');
+        if ($header) {
+            $contentType = $header->getFieldValue();
+            switch ($contentType) {
+                case 'application/json':
+                    return new ResponseData(
+                        $response->getContent(),
+                        $response->getStatusCode()
+                    );
+                default:
+                    throw new RuntimeException("HTTP content-type: {$contentType} does not supported");
+            }
+        }
+
+        throw new RuntimeException('Unknown content-type');
     }
 }
