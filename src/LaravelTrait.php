@@ -77,7 +77,7 @@ trait LaravelTrait
 
         return $request;
     }
-    
+
     /**
      * @param Response $response
      * @return ResponseData
