@@ -93,14 +93,21 @@ trait SymfonyTrait
         return $request;
     }
 
-    public function assertHttpResponseForOperation(Response $response, Operation $operation)
+    /**
+     * @param Response $response
+     * @return ResponseData
+     */
+    protected function extractResponseData(Response $response)
     {
         $contentType = $response->headers->get('content-type');
         switch ($contentType) {
             case 'application/json':
-                break;
+                return new ResponseData(
+                    $response->getContent(),
+                    $response->getStatusCode()
+                );
             default:
-                throw new RuntimeException('Content type, ' . $contentType . ' is not supported');
+                throw new RuntimeException("HTTP content-type: {$contentType} does not supported");
         }
     }
 }
