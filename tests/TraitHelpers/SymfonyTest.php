@@ -7,7 +7,7 @@ namespace Tests\TraitHelpers;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class SymfonyTraitTest extends AbstractTraitTestCase
+class SymfonyTest extends AbstractTestCase
 {
     use \Ovr\Swagger\SymfonyTrait;
 

@@ -5,11 +5,11 @@
 
 namespace Tests\TraitHelpers;
 
-use Slim\Http\Request;
+use Illuminate\Http\Request;
 
-class SlimTraitTest extends AbstractTraitTestCase
+class LaravelTest extends AbstractTestCase
 {
-    use \Ovr\Swagger\SlimTrait;
+    use \Ovr\Swagger\LaravelTrait;
 
     /**
      * @dataProvider getDataProviderForSimpleOperations
@@ -20,15 +20,11 @@ class SlimTraitTest extends AbstractTraitTestCase
      */
     public function testMakeRequestByOperationSimpleSuccess($operationId, $url, array $parameters)
     {
-        if ($operationId === 'createUser') {
-            $this->markTestSkipped('formData not supported, @todo!');
-        }
-
         $operation = $this->getSwaggerWrapper()->getOperationByName($operationId);
 
         $request = $this->makeRequestByOperation($operation, $parameters, false);
         parent::assertInstanceOf(Request::class, $request);
         parent::assertSame(strtoupper($operation->method), $request->getMethod());
-        parent::assertSame($url, $request->getUri()->getPath());
+        parent::assertSame($url, $request->getRequestUri());
     }
 }

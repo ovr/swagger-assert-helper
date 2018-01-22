@@ -5,7 +5,7 @@
 
 namespace Tests\TraitHelpers;
 
-abstract class AbstractTraitTestCase extends \PHPUnit\Framework\TestCase
+abstract class AbstractTestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * @return \Ovr\Swagger\SwaggerWrapper

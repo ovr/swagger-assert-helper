@@ -7,7 +7,7 @@ namespace Tests\TraitHelpers;
 
 use Zend\Http\Request;
 
-class ZendTraitTest extends AbstractTraitTestCase
+class ZendTest extends AbstractTestCase
 {
     use \Ovr\Swagger\ZendTrait;
 
