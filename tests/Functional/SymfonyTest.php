@@ -25,7 +25,7 @@ class SymfonyTest extends \PHPUnit\Framework\TestCase
             )
         );
         $this->getSwaggerWrapper()
-            ->assertHttpResponseForOperation($response, $operation, Response::HTTP_OK);
+            ->assertHttpResponseForOperation($this->extractResponseData($response), $operation, Response::HTTP_OK);
     }
 
     public function testCreateUser()
@@ -41,7 +41,7 @@ class SymfonyTest extends \PHPUnit\Framework\TestCase
             )
         );
         $this->getSwaggerWrapper()
-            ->assertHttpResponseForOperation($response, $operation, Response::HTTP_OK);
+            ->assertHttpResponseForOperation($this->extractResponseData($response), $operation, Response::HTTP_OK);
     }
 
     public function testGetUserFriendsById()
@@ -56,7 +56,7 @@ class SymfonyTest extends \PHPUnit\Framework\TestCase
             )
         );
         $this->getSwaggerWrapper()
-            ->assertHttpResponseForOperation($response, $operation, Response::HTTP_OK);
+            ->assertHttpResponseForOperation($this->extractResponseData($response), $operation, Response::HTTP_OK);
     }
 
     /**
