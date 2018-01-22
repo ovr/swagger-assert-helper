@@ -12,7 +12,6 @@ use Swagger\Annotations\Operation;
 use Swagger\Annotations\Parameter;
 use Swagger\Annotations\Property;
 use Swagger\Annotations\Response as SwaggerResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 class SwaggerWrapper extends \PHPUnit\Framework\Assert
 {
@@ -201,12 +200,12 @@ class SwaggerWrapper extends \PHPUnit\Framework\Assert
     }
 
     /**
-     * @param Response $httpResponse
+     * @param ResponseData $httpResponse
      * @param Operation $path
      * @param int $statusCode
      * @throws \RuntimeException
      */
-    public function assertHttpResponseForOperation(Response $httpResponse, Operation $path, $statusCode = 200)
+    public function assertHttpResponseForOperation(ResponseData $httpResponse, Operation $path, $statusCode = 200)
     {
         $response = $this->findResponseByStatusCode($path, $statusCode);
         if ($response) {
@@ -220,10 +219,10 @@ class SwaggerWrapper extends \PHPUnit\Framework\Assert
     }
 
     /**
-     * @param Response $httpResponse
+     * @param ResponseData $httpResponse
      * @param SwaggerResponse $response
      */
-    public function assertHttpResponseForOperationResponse(Response $httpResponse, SwaggerResponse $response)
+    public function assertHttpResponseForOperationResponse(ResponseData $httpResponse, SwaggerResponse $response)
     {
         parent::assertEquals(
             $response->response,
