@@ -16,6 +16,7 @@ use DateTime;
  *  @SWG\Property(property="is_admin", type="boolean"),
  *  @SWG\Property(property="created", type="string", format="date"),
  *  @SWG\Property(property="last_login", type="string", format="date-time"),
+ *  @SWG\Property(property="rating", type="number"),
  * )
  */
 class User
@@ -37,6 +38,11 @@ class User
     protected $last_login;
 
     /**
+     * @var float
+     */
+    protected $rating;
+
+    /**
      * @return User
      */
     public static function generateFake()
@@ -49,6 +55,7 @@ class User
         $user->name = $faker->name;
         $user->created = new DateTime();
         $user->last_login = new DateTime();
+        $user->rating = mt_rand(0, 1000) + 1.0;
 
         return $user;
     }
