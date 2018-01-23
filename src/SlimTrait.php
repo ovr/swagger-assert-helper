@@ -8,6 +8,7 @@ namespace Ovr\Swagger;
 use InvalidArgumentException;
 use RuntimeException;
 use Slim\Http\Request;
+use Slim\Http\Response;
 use Swagger\Annotations\Operation;
 
 trait SlimTrait
@@ -76,5 +77,23 @@ trait SlimTrait
             [],
             $body
         );
+    }
+
+    /**
+     * @param Response $response
+     * @return ResponseData
+     */
+    protected function extractResponseData(Response $response)
+    {
+        $contentType = $response->getHeader('content-type');
+        switch ($contentType) {
+            case 'application/json':
+                return new ResponseData(
+                    (string) $response->getBody(),
+                    $response->getStatusCode()
+                );
+            default:
+                throw new RuntimeException("HTTP content-type: {$contentType} does not supported");
+        }
     }
 }
