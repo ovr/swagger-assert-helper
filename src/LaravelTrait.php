@@ -31,7 +31,7 @@ trait LaravelTrait
 
         if ($operation->parameters) {
             foreach ($operation->parameters as $parameter) {
-                if (isset($parameters[$parameter->name])) {
+                if (array_key_exists($parameter->name, $parameters)) {
                     switch ($parameter->in) {
                         case 'path':
                             $path = str_replace('{' . $parameter->name . '}', $parameters[$parameter->name], $path);

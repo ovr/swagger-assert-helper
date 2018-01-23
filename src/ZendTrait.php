@@ -31,7 +31,7 @@ trait ZendTrait
 
         if ($operation->parameters) {
             foreach ($operation->parameters as $parameter) {
-                if (isset($parameters[$parameter->name])) {
+                if (array_key_exists($parameter->name, $parameters)) {
                     switch ($parameter->in) {
                         case 'header':
                             $request->getHeaders()->addHeaderLine($parameter->name, $parameters[$parameter->name]);
