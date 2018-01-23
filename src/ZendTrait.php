@@ -53,6 +53,8 @@ trait ZendTrait
                                 )
                             );
                     }
+
+                    unset($parameters[$parameter->name]);
                 } elseif ($parameter->required && !($options & SwaggerWrapper::SKIP_REQUIRED)) {
                     throw new InvalidArgumentException(
                         sprintf(
@@ -68,6 +70,12 @@ trait ZendTrait
                     'Operation does not have parameters, but you pass %d parameter(s)',
                     count($parameters)
                 )
+            );
+        }
+
+        foreach ($parameters as $parameter => $value) {
+            throw new RuntimeException(
+                "Parameter '{$parameter}' passed, but does not exist in request definition (swagger)"
             );
         }
 
