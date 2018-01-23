@@ -31,7 +31,7 @@ trait SymfonyTrait
 
         if ($operation->parameters) {
             foreach ($operation->parameters as $parameter) {
-                if (isset($parameters[$parameter->name])) {
+                if (array_key_exists($parameter->name, $parameters)) {
                     $parameterValue = $parameters[$parameter->name];
                     if ($parameter->enum && !($options & SwaggerWrapper::SKIP_ENUM_CHECK)) {
                         if (!in_array($parameterValue, $parameter->enum)) {
