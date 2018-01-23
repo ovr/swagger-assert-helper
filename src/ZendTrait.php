@@ -8,6 +8,7 @@ namespace Ovr\Swagger;
 use InvalidArgumentException;
 use RuntimeException;
 use Swagger\Annotations\Operation;
+use Swagger\Annotations\Parameter;
 use Zend\Http\Request;
 use Zend\Http\Response;
 
@@ -26,59 +27,37 @@ trait ZendTrait
     public function makeRequestByOperation(Operation $operation, array $parameters = [], $options = 0)
     {
         $request = new Request();
-
         $path = $operation->path;
 
-        if ($operation->parameters) {
-            foreach ($operation->parameters as $parameter) {
-                if (array_key_exists($parameter->name, $parameters)) {
-                    switch ($parameter->in) {
-                        case 'header':
-                            $request->getHeaders()->addHeaderLine($parameter->name, $parameters[$parameter->name]);
-                            break;
-                        case 'path':
-                            $path = str_replace('{' . $parameter->name . '}', $parameters[$parameter->name], $path);
-                            break;
-                        case 'query':
-                            $request->getQuery()->set($parameter->name, $parameters[$parameter->name]);
-                            break;
-                        case 'formData':
-                            $request->getPost()->set($parameter->name, $parameters[$parameter->name]);
-                            break;
-                        default:
-                            throw new RuntimeException(
-                                sprintf(
-                                    'Parameter "%s" with ->in = "%s" is not supported',
-                                    $parameter->parameter,
-                                    $parameter->in
-                                )
-                            );
-                    }
-
-                    unset($parameters[$parameter->name]);
-                } elseif ($parameter->required && !($options & SwaggerWrapper::SKIP_REQUIRED)) {
-                    throw new InvalidArgumentException(
-                        sprintf(
-                            'Parameter "%s" is required, please pass value for this in $parameters',
-                            $parameter->name
-                        )
-                    );
+        SwaggerWrapper::hydrateRequestByOperation(
+            $operation,
+            function (Parameter $parameter, $value) use ($request, &$path) {
+                switch ($parameter->in) {
+                    case 'header':
+                        $request->getHeaders()->addHeaderLine($parameter->name, $value);
+                        break;
+                    case 'path':
+                        $path = str_replace('{' . $parameter->name . '}', $value, $path);
+                        break;
+                    case 'query':
+                        $request->getQuery()->set($parameter->name, $value);
+                        break;
+                    case 'formData':
+                        $request->getPost()->set($parameter->name, $value);
+                        break;
+                    default:
+                        throw new RuntimeException(
+                            sprintf(
+                                'Parameter "%s" with ->in = "%s" is not supported',
+                                $parameter->parameter,
+                                $parameter->in
+                            )
+                        );
                 }
-            }
-        } elseif ($parameters) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Operation does not have parameters, but you pass %d parameter(s)',
-                    count($parameters)
-                )
-            );
-        }
-
-        foreach ($parameters as $parameter => $value) {
-            throw new RuntimeException(
-                "Parameter '{$parameter}' passed, but does not exist in request definition (swagger)"
-            );
-        }
+            },
+            $parameters,
+            $options
+        );
 
         $request->setUri($path);
         $request->setMethod($operation->method);
