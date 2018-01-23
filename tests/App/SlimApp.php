@@ -5,32 +5,16 @@
 
 namespace Tests\App;
 
-use Api\Controller\UserController;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-class SlimApp
+class SlimApp extends AbstractApp
 {
     public function handle(Request $request)
     {
         $response = new Response();
 
-        $controller = new UserController();
-        $result = false;
-
-        switch ($request->getUri()) {
-            case '/v1/user/1':
-                $result = $controller->getAction();
-                break;
-            case '/v1/user':
-                $result = $controller->createAction();
-                break;
-            case '/v1/user/1/friends':
-                $result = $controller->getFriendsAction();
-                break;
-        }
-
-        $response->write(json_encode($result));
+        $response->write(json_encode($this->dispatch($request->getUri(), $request->getMethod())));
         $response->withHeader('Content-Type', 'application/json');
 
         return $response;

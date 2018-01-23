@@ -5,32 +5,16 @@
 
 namespace Tests\App;
 
-use Api\Controller\UserController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class SymfonyApp
+class SymfonyApp extends AbstractApp
 {
     public function handle(Request $request)
     {
         $response = new JsonResponse();
 
-        $controller = new UserController();
-        $result = false;
-
-        switch ($request->getRequestUri()) {
-            case '/v1/user/1':
-                $result = $controller->getAction();
-                break;
-            case '/v1/user':
-                $result = $controller->createAction();
-                break;
-            case '/v1/user/1/friends':
-                $result = $controller->getFriendsAction();
-                break;
-        }
-
-        $response->setData($result);
+        $response->setData($this->dispatch($request->getRequestUri(), $request->getMethod()));
         return $response;
     }
 }
