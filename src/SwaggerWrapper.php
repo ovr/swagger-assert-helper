@@ -12,6 +12,7 @@ use Swagger\Annotations\Operation;
 use Swagger\Annotations\Parameter;
 use Swagger\Annotations\Property;
 use Swagger\Annotations\Response as SwaggerResponse;
+use InvalidArgumentException;
 
 class SwaggerWrapper extends \PHPUnit\Framework\Assert
 {
@@ -561,5 +562,64 @@ class SwaggerWrapper extends \PHPUnit\Framework\Assert
         }
 
         return true;
+    }
+
+    /**
+     * @param Operation $operation
+     * @param callable $requestParameterHydrator
+     * @param array $parameters
+     * @param int $options
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     */
+    static public function hydrateRequestByOperation(
+        Operation $operation,
+        callable $requestParameterHydrator,
+        array $parameters = [],
+        $options = 0
+    ) {
+        if ($operation->parameters) {
+            foreach ($operation->parameters as $parameter) {
+                if (array_key_exists($parameter->name, $parameters)) {
+                    $parameterValue = $parameters[$parameter->name];
+                    if ($parameter->enum && !($options & SwaggerWrapper::SKIP_ENUM_CHECK)) {
+                        if (!in_array($parameterValue, $parameter->enum)) {
+                            throw new InvalidArgumentException(
+                                sprintf(
+                                    'Parameter "%s" has enum {"%s"}, but value "%s"',
+                                    $parameter->name,
+                                    implode('"|"', $parameter->enum),
+                                    $parameterValue
+                                )
+                            );
+                        }
+                    }
+
+                    $requestParameterHydrator($parameter, $parameterValue);
+
+                    unset($parameters[$parameter->name]);
+                } elseif ($parameter->required && !($options & SwaggerWrapper::SKIP_REQUIRED)) {
+                    throw new InvalidArgumentException(
+                        sprintf(
+                            'Parameter "%s" is required, please pass value for this in $parameters',
+                            $parameter->name
+                        )
+                    );
+                }
+            }
+        } elseif ($parameters) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Operation does not have parameters, but you pass %d parameter(s)',
+                    count($parameters)
+                )
+            );
+        }
+
+        foreach ($parameters as $parameter => $value) {
+            throw new RuntimeException(
+                "Parameter '{$parameter}' passed, but does not exist in request definition (swagger)"
+            );
+        }
     }
 }
