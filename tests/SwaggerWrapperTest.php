@@ -198,4 +198,27 @@ class SwaggerWrapperTest extends \PHPUnit\Framework\TestCase
         $swaggerWrapper = $this->getSwaggerWrapper();
         $swaggerWrapper->validateProperty($property, 24);
     }
+
+    public function testSetSecurityForOperationSuccess()
+    {
+        $swaggerWrapper = $this->getSwaggerWrapper();
+
+        $operation = $swaggerWrapper->getOperationByName('getUserById');
+        $swaggerWrapper->setSecurityForOperation($operation, [['jwt' => []]]);
+
+        $exist = false;
+
+        foreach ($operation->parameters as $parameter) {
+            if ($parameter->name === 'X-AUTH-TOKEN') {
+                $exist = true;
+
+                break;
+            }
+        }
+
+        parent::assertTrue(
+            $exist,
+            'X-AUTH-TOKEN doesnot exist inside getUserById after setSecurityForOperation'
+        );
+    }
 }
