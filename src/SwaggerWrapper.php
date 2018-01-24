@@ -228,7 +228,7 @@ class SwaggerWrapper extends \PHPUnit\Framework\Assert
         parent::assertEquals(
             $response->response,
             $httpResponse->getStatusCode(),
-            'HTTP Response Code must equals with ' . $response->response
+            "HTTP Response Code must equals with {$response->response}\nResponse\n{$httpResponse->getContent()}"
         );
 
         if ($response->schema) {
