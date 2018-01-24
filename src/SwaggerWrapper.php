@@ -77,39 +77,47 @@ class SwaggerWrapper extends \PHPUnit\Framework\Assert
         $operation = clone $operation;
         $operation->path = $this->swagger->basePath . $operation->path;
 
-        /**
-         * I don't known How will be better
-         * But I am going to add a new required Parameter to check this in Request Scheme
-         */
         if ($operation->security) {
-            foreach ($operation->security as $security) {
-                parent::assertInternalType(
-                    'array',
-                    $security,
-                    'Operation->security must be array of objects'
-                );
-
-                $name = key($security);
-
-                $securityDefinition = $this->getSecurityByName($name);
-                parent::assertInternalType(
-                    'object',
-                    $securityDefinition,
-                    "Unknown security definition {$name}"
-                );
-
-                $operation->parameters[] = new Parameter(
-                    [
-                        'name' => $securityDefinition->name,
-                        'in' => $securityDefinition->in,
-                        'description' => $securityDefinition->description,
-                        'required' => true
-                    ]
-                );
-            }
+            $this->addParametersFromSecurity($operation);
         }
 
         return $operation;
+    }
+
+
+    /**
+     * I don't known How will be better
+     * But I am going to add a new required Parameter to check this in Request Scheme
+     *
+     * @param Operation $operation
+     */
+    protected function addParametersFromSecurity(Operation $operation)
+    {
+        foreach ($operation->security as $security) {
+            parent::assertInternalType(
+                'array',
+                $security,
+                'Operation->security must be array of objects'
+            );
+
+            $name = key($security);
+
+            $securityDefinition = $this->getSecurityByName($name);
+            parent::assertInternalType(
+                'object',
+                $securityDefinition,
+                "Unknown security definition {$name}"
+            );
+
+            $operation->parameters[] = new Parameter(
+                [
+                    'name' => $securityDefinition->name,
+                    'in' => $securityDefinition->in,
+                    'description' => $securityDefinition->description,
+                    'required' => true
+                ]
+            );
+        }
     }
 
     /**
@@ -208,6 +216,11 @@ class SwaggerWrapper extends \PHPUnit\Framework\Assert
      */
     public function assertHttpResponseForOperation(ResponseData $httpResponse, Operation $path, $statusCode = 200)
     {
+        // User can mutate Operation->security, and we should re-enable it
+        if ($path->security) {
+            $this->addParametersFromSecurity($path);
+        }
+
         $response = $this->findResponseByStatusCode($path, $statusCode);
         if ($response) {
             return $this->assertHttpResponseForOperationResponse(
