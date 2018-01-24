@@ -78,7 +78,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
         $operation->path = $this->swagger->basePath . $operation->path;
 
         if ($operation->security) {
-            $this->addParametersFromSecurity($operation);
+            $this->addParametersFromSecurity($operation, false);
         }
 
         return $operation;
@@ -90,8 +90,9 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
      * But I am going to add a new required Parameter to check this in Request Scheme
      *
      * @param Operation $operation
+     * @param bool $checkUnique
      */
-    protected function addParametersFromSecurity(Operation $operation)
+    protected function addParametersFromSecurity(Operation $operation, $checkUnique)
     {
         foreach ($operation->security as $security) {
             parent::assertInternalType(
@@ -108,6 +109,15 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
                 $securityDefinition,
                 "Unknown security definition {$name}"
             );
+
+            if ($checkUnique) {
+                foreach ($operation->parameters as $parameter) {
+                    if ($parameter->name == $securityDefinition->name) {
+                        // We dont needed to add security parameter twice
+                        continue 2;
+                    }
+                }
+            }
 
             $operation->parameters[] = new Parameter(
                 [
@@ -218,7 +228,7 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
     {
         // User can mutate Operation->security, and we should re-enable it
         if ($path->security) {
-            $this->addParametersFromSecurity($path);
+            $this->addParametersFromSecurity($path, true);
         }
 
         $response = $this->findResponseByStatusCode($path, $statusCode);
