@@ -74,17 +74,14 @@ trait ZendTrait
         $header = $response->getHeaders()->get('content-type');
         if ($header) {
             $contentType = $header->getFieldValue();
-            switch ($contentType) {
-                case 'application/json':
-                    return new ResponseData(
-                        $response->getContent(),
-                        $response->getStatusCode()
-                    );
-                default:
-                    throw new RuntimeException("HTTP content-type: {$contentType} does not supported");
-            }
+
+            return ResponseData::factory(
+                $contentType,
+                (string) $response->getContent(),
+                $response->getStatusCode()
+            );
         }
 
-        throw new RuntimeException('Unknown content-type');
+        throw new RuntimeException('Unknown HTTP "content-type"');
     }
 }

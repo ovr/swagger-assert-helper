@@ -85,15 +85,10 @@ trait SlimTrait
      */
     protected function extractResponseData(Response $response)
     {
-        $contentType = $response->getHeader('content-type');
-        switch ($contentType) {
-            case 'application/json':
-                return new ResponseData(
-                    (string) $response->getBody(),
-                    $response->getStatusCode()
-                );
-            default:
-                throw new RuntimeException("HTTP content-type: {$contentType} does not supported");
-        }
+        return ResponseData::factory(
+            $response->getHeader('content-type'),
+            (string) $response->getBody(),
+            $response->getStatusCode()
+        );
     }
 }

@@ -5,7 +5,6 @@
 
 namespace Ovr\Swagger;
 
-use InvalidArgumentException;
 use RuntimeException;
 use Swagger\Annotations\Operation;
 use Swagger\Annotations\Parameter;
@@ -72,15 +71,10 @@ trait SymfonyTrait
      */
     protected function extractResponseData(Response $response)
     {
-        $contentType = $response->headers->get('content-type');
-        switch ($contentType) {
-            case 'application/json':
-                return new ResponseData(
-                    $response->getContent(),
-                    $response->getStatusCode()
-                );
-            default:
-                throw new RuntimeException("HTTP content-type: {$contentType} does not supported");
-        }
+        return ResponseData::factory(
+            $response->headers->get('content-type'),
+            $response->getContent(),
+            $response->getStatusCode()
+        );
     }
 }

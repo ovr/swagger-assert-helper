@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace Ovr\Swagger;
 
+use RuntimeException;
+
 class ResponseData
 {
     /**
@@ -43,5 +45,24 @@ class ResponseData
     public function getStatusCode(): int
     {
         return $this->statusCode;
+    }
+
+    /**
+     * @param string $contentType
+     * @param string $content
+     * @param int $statusCode
+     * @return ResponseData
+     */
+    static public function factory(string $contentType, string $content, int $statusCode)
+    {
+        switch ($contentType) {
+            case 'application/json':
+                return new ResponseData(
+                    $content,
+                    $statusCode
+                );
+            default:
+                throw new RuntimeException("HTTP content-type: {$contentType} does not supported");
+        }
     }
 }
