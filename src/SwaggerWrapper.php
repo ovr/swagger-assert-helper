@@ -84,6 +84,16 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
         return $operation;
     }
 
+    /**
+     * @param Operation $operation
+     * @param array $security
+     */
+    public function setSecurityForOperation(Operation $operation, array $security)
+    {
+        $operation->security = $security;
+
+        $this->addParametersFromSecurity($operation, true);
+    }
 
     /**
      * I don't known How will be better
@@ -226,11 +236,6 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
      */
     public function assertHttpResponseForOperation(Response $httpResponse, Operation $path, $statusCode = 200)
     {
-        // User can mutate Operation->security, and we should re-enable it
-        if ($path->security) {
-            $this->addParametersFromSecurity($path, true);
-        }
-
         $response = $this->findResponseByStatusCode($path, $statusCode);
         if ($response) {
             return $this->assertHttpResponseForOperationResponse(
