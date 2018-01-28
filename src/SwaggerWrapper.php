@@ -329,11 +329,11 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
             $value = $jsonPath->find('$.' . $property->property);
             if (!$value->valid()) {
                 if ($property->required) {
-                    throw new RuntimeException(
-                        sprintf(
-                            'Cannot find property "%s" in json',
-                            $property->property
-                        )
+                    $path = json_encode($jsonPath->data(), JSON_PRETTY_PRINT);
+
+                    throw new \PHPUnit_Framework_ExpectationFailedException(
+                        "Cannot find required property '{$property->property}' from {$scheme->definition}\n" .
+                        "Path\n{$path}"
                     );
                 } else {
                     continue;
