@@ -93,7 +93,7 @@ class SwaggerWrapperTest extends \PHPUnit\Framework\TestCase
     {
         return new SwaggerWrapperMock(
             \Swagger\scan(
-                __DIR__ . '/../examples'
+                __DIR__ . '/../examples/api'
             )
         );
     }

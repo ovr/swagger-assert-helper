@@ -650,4 +650,20 @@ class SwaggerWrapper extends \PHPUnit\Framework\Assert
             );
         }
     }
+
+    /**
+     * @return string
+     */
+    public function getScheme()
+    {
+        return 'https';
+    }
+
+    /**
+     * @return string
+     */
+    public function getHost()
+    {
+        return $this->swagger->host;
+    }
 }
