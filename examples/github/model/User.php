@@ -5,8 +5,6 @@
 
 namespace Api\Model;
 
-use DateTime;
-
 /**
  * @SWG\Definition(
  *  definition = "UserResponse",
