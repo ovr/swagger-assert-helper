@@ -57,6 +57,7 @@ class ResponseData
     {
         switch ($contentType) {
             case 'application/json':
+            case 'application/json; charset=utf-8':
                 return new ResponseData(
                     $content,
                     $statusCode
