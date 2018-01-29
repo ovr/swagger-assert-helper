@@ -14,7 +14,7 @@ abstract class AbstractTestCase extends \PHPUnit\Framework\TestCase
     {
         return new \Ovr\Swagger\SwaggerWrapper(
             \Swagger\scan(
-                __DIR__ . '/../../examples'
+                __DIR__ . '/../../examples/api'
             )
         );
     }
