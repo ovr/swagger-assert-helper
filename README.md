@@ -64,8 +64,8 @@ class UserController extends AbstractController
 
 More definition examples you can find in:
 
-- [Example/API](examples/api) - example of small HTTP REST service
-- [Example/GitHub](examples/github) - example definitions for `api.github.com`
+- [Example/API](examples/api) - example of small HTTP REST service by PHP comments
+- [Example/GitHub](examples/github) - example definitions for `api.github.com` by PHP comments
 
 # 2. Write test for your Controller
 
@@ -119,6 +119,21 @@ class UserControllerTest extends \PHPUnit\Framework\TestCase
      * Return API module/service/bundle, that handle request and return Response for it
      */
     abstract public function getApi();
+
+    /**
+     * SwaggerWrapper store all information about API and help us with assertHttpResponseForOperation
+     *
+     * @return \Ovr\Swagger\SwaggerWrapper
+     */
+    protected function getSwaggerWrapper()
+    {
+        return new \Ovr\Swagger\SwaggerWrapper(
+            \Swagger\scan(
+                // Path to your API
+                __DIR__ . '/../../examples/api'
+            )
+        );
+    }
 }
 ```
 
