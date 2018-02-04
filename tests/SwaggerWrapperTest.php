@@ -7,6 +7,36 @@ namespace Tests;
 
 class SwaggerWrapperTest extends \PHPUnit\Framework\TestCase
 {
+    public function getUnsupportedSwaggerVersionsDataProvider()
+    {
+        return [
+            [
+                '2.1'
+            ],
+            [
+                '1.0'
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider getUnsupportedSwaggerVersionsDataProvider
+     *
+     * @param $version
+     */
+    public function testSwaggerSpecificationConstraitFail($version)
+    {
+        $swagger = new \Swagger\Annotations\Swagger([]);
+        $swagger->swagger = $version;
+
+        parent::expectException(\RuntimeException::class);
+        parent::expectExceptionMessage("Unsupported Swagger version ({$version}), only 2.0 Swagger supported");
+
+        new \Ovr\Swagger\SwaggerWrapper(
+            $swagger
+        );
+    }
+
     public function testGetSecurityByNameSuccess()
     {
         $expectedSecurityName = 'jwt';
