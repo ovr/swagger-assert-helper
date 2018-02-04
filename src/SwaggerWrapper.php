@@ -43,6 +43,12 @@ class SwaggerWrapper extends \PHPUnit_Framework_Assert
 
     public function __construct(\Swagger\Annotations\Swagger $swagger)
     {
+        if ($swagger->swagger != '2.0') {
+            throw new RuntimeException(
+                "Unsupported Swagger version ({$swagger->swagger}), only 2.0 Swagger supported"
+            );
+        }
+
         $this->swagger = $swagger;
     }
 
