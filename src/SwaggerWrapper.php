@@ -337,7 +337,7 @@ class SwaggerWrapper extends \PHPUnit\Framework\Assert
                 if ($property->required) {
                     $path = json_encode($jsonPath->data(), JSON_PRETTY_PRINT);
 
-                    throw new \PHPUnit_Framework_ExpectationFailedException(
+                    throw new \PHPUnit\Framework\ExpectationFailedException(
                         "Cannot find required property '{$property->property}' from {$scheme->definition}\n" .
                         "Path\n{$path}"
                     );
