@@ -6,6 +6,7 @@
 namespace Tests;
 
 use Flow\JSONPath\JSONPath;
+use PHPUnit\Framework\ExpectationFailedException;
 
 class SwaggerWrapperTest extends \PHPUnit_Framework_TestCase
 {
@@ -255,6 +256,8 @@ class SwaggerWrapperTest extends \PHPUnit_Framework_TestCase
         $schema->properties = [$property];
 
         $swaggerWrapper = $this->getSwaggerWrapper();
+
+        parent::expectException(ExpectationFailedException::class);
         $swaggerWrapper->validateScheme($schema, new JSONPath([]));
     }
 }
