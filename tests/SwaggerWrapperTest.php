@@ -5,6 +5,8 @@
 
 namespace Tests;
 
+use Flow\JSONPath\JSONPath;
+
 class SwaggerWrapperTest extends \PHPUnit\Framework\TestCase
 {
     public function getUnsupportedSwaggerVersionsDataProvider()
@@ -146,6 +148,18 @@ class SwaggerWrapperTest extends \PHPUnit\Framework\TestCase
         return $property;
     }
 
+    /**
+     * @return \Swagger\Annotations\Definition
+     */
+    protected function getMockDefinition()
+    {
+        $definition = $this->getMockBuilder(\Swagger\Annotations\Definition::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return $definition;
+    }
+
     public function testIntPropertyInclusiveMinimumSuccess()
     {
         $property = $this->getMockProperty('test', 'integer');
@@ -250,5 +264,18 @@ class SwaggerWrapperTest extends \PHPUnit\Framework\TestCase
             $exist,
             'X-AUTH-TOKEN doesnot exist inside getUserById after setSecurityForOperation'
         );
+    }
+
+    public function testValidateSchemeFailedOnRequiredProperty()
+    {
+        $schema = $this->getMockDefinition();
+
+        $property = $this->getMockProperty('test', 'integer');
+        $property->required = true;
+
+        $schema->properties = [$property];
+
+        $swaggerWrapper = $this->getSwaggerWrapper();
+        $swaggerWrapper->validateScheme($schema, new JSONPath([]));
     }
 }
