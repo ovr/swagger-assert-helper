@@ -5,7 +5,9 @@
 
 namespace Tests;
 
+use Flow\JSONPath\JSONPath;
 use Ovr\Swagger\SwaggerWrapper;
+use Swagger\Annotations\Definition;
 use Swagger\Annotations\Property;
 
 /**
@@ -13,6 +15,14 @@ use Swagger\Annotations\Property;
  */
 class SwaggerWrapperMock extends SwaggerWrapper
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function validateScheme(Definition $scheme, JSONPath $jsonPath)
+    {
+        return parent::validateScheme($scheme, $jsonPath);
+    }
+
     /**
      * {@inheritdoc}
      */
