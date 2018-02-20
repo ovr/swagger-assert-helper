@@ -44,6 +44,9 @@ trait SymfonyTrait
                     case 'formData':
                         $request->request->set($parameter->name, $value);
                         break;
+                    case 'body':
+                        $request->request->replace($value);
+                        break;
                     default:
                         throw new RuntimeException(
                             sprintf(
